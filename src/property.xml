@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Author>Microsoft Office User</Author>
+  <LastAuthor>Microsoft Office User</LastAuthor>
+  <Created>2016-06-12T18:59:31Z</Created>
+  <LastSaved>2016-06-12T19:36:28Z</LastSaved>
+  <Version>15.0</Version>
+ </DocumentProperties>
+ <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
+  <AllowPNG/>
+  <PixelsPerInch>96</PixelsPerInch>
+ </OfficeDocumentSettings>
+ <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+  <WindowHeight>15460</WindowHeight>
+  <WindowWidth>25600</WindowWidth>
+  <WindowTopX>0</WindowTopX>
+  <WindowTopY>460</WindowTopY>
+  <ProtectStructure>False</ProtectStructure>
+  <ProtectWindows>False</ProtectWindows>
+ </ExcelWorkbook>
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#000000"/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Sheet1">
+  <Table ss:ExpandedColumnCount="7" ss:ExpandedRowCount="11" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="65" ss:DefaultRowHeight="16">
+   <Row>
+    <Cell><Data ss:Type="String">房产名</Data></Cell>
+    <Cell><Data ss:Type="String">价格</Data></Cell>
+    <Cell><Data ss:Type="String">单价</Data></Cell>
+    <Cell><Data ss:Type="String">房型</Data></Cell>
+    <Cell><Data ss:Type="String">面积</Data></Cell>
+    <Cell><Data ss:Type="String">特点</Data></Cell>
+    <Cell><Data ss:Type="String">图片</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">星海人家</Data></Cell>
+    <Cell><Data ss:Type="Number">258</Data></Cell>
+    <Cell><Data ss:Type="Number">22632</Data></Cell>
+    <Cell><Data ss:Type="String">3室2厅1卫</Data></Cell>
+    <Cell><Data ss:Type="Number">114</Data></Cell>
+    <Cell><Data ss:Type="String">朝南、精装修、地铁口</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">师惠花苑</Data></Cell>
+    <Cell><Data ss:Type="Number">500</Data></Cell>
+    <Cell><Data ss:Type="Number">27778</Data></Cell>
+    <Cell><Data ss:Type="String">3室2厅2卫</Data></Cell>
+    <Cell><Data ss:Type="Number">180</Data></Cell>
+    <Cell><Data ss:Type="String">朝南、精装修、地铁口</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">昂内天骄花园</Data></Cell>
+    <Cell><Data ss:Type="Number">125</Data></Cell>
+    <Cell><Data ss:Type="Number">12500</Data></Cell>
+    <Cell><Data ss:Type="String">2室2厅2卫</Data></Cell>
+    <Cell><Data ss:Type="Number">100</Data></Cell>
+    <Cell><Data ss:Type="String">朝南、精装修、地铁口</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">东方春晓</Data></Cell>
+    <Cell><Data ss:Type="Number">3280</Data></Cell>
+    <Cell><Data ss:Type="Number">68763</Data></Cell>
+    <Cell><Data ss:Type="String">6室2厅2卫</Data></Cell>
+    <Cell><Data ss:Type="Number">477</Data></Cell>
+    <Cell><Data ss:Type="String">朝南、精装修、地铁口</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">都市花园西区</Data></Cell>
+    <Cell><Data ss:Type="Number">350</Data></Cell>
+    <Cell><Data ss:Type="Number">19126</Data></Cell>
+    <Cell><Data ss:Type="String">5室2厅2卫</Data></Cell>
+    <Cell><Data ss:Type="Number">183</Data></Cell>
+    <Cell><Data ss:Type="String">朝南、精装修、地铁口</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">中茵皇冠</Data></Cell>
+    <Cell><Data ss:Type="Number">750</Data></Cell>
+    <Cell><Data ss:Type="Number">33333</Data></Cell>
+    <Cell><Data ss:Type="String">3室2厅3卫</Data></Cell>
+    <Cell><Data ss:Type="Number">225</Data></Cell>
+    <Cell><Data ss:Type="String">朝南、精装修、地铁口</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">中天湖畔花园</Data></Cell>
+    <Cell><Data ss:Type="Number">670</Data></Cell>
+    <Cell><Data ss:Type="Number">30678</Data></Cell>
+    <Cell><Data ss:Type="String">4室2厅3卫</Data></Cell>
+    <Cell><Data ss:Type="Number">218</Data></Cell>
+    <Cell><Data ss:Type="String">朝南、精装修、地铁口</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">万科玲珑湾</Data></Cell>
+    <Cell><Data ss:Type="Number">359</Data></Cell>
+    <Cell><Data ss:Type="Number">23933</Data></Cell>
+    <Cell><Data ss:Type="String">3室2厅2卫</Data></Cell>
+    <Cell><Data ss:Type="Number">150</Data></Cell>
+    <Cell><Data ss:Type="String">朝南、精装修、地铁口</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">华庭苑</Data></Cell>
+    <Cell><Data ss:Type="Number">310</Data></Cell>
+    <Cell><Data ss:Type="Number">18951</Data></Cell>
+    <Cell><Data ss:Type="String">3室2厅2卫</Data></Cell>
+    <Cell><Data ss:Type="Number">164</Data></Cell>
+    <Cell><Data ss:Type="String">朝南、精装修、地铁口</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">新加花园</Data></Cell>
+    <Cell><Data ss:Type="Number">400</Data></Cell>
+    <Cell><Data ss:Type="Number">19512</Data></Cell>
+    <Cell><Data ss:Type="String">4室2厅2卫</Data></Cell>
+    <Cell><Data ss:Type="Number">205</Data></Cell>
+    <Cell><Data ss:Type="String">朝南、精装修、地铁口</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.3"/>
+    <Footer x:Margin="0.3"/>
+    <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
+   </PageSetup>
+   <PageLayoutZoom>0</PageLayoutZoom>
+   <Selected/>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>14</ActiveRow>
+     <ActiveCol>8</ActiveCol>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+ </Worksheet>
+</Workbook>
