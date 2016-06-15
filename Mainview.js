@@ -3,14 +3,16 @@ import {
     View,
     StyleSheet,
     StatusBar,
+    AsyncStorage,
+    NavigatorIOS,
+    Text,
 } from 'react-native';
 
 import TabNavigator from 'react-native-tab-navigator';
-import Myhome from './src/FeedListindex';
+import Myhome from './src/FeedList';
+import Myperson from './src/Login/person';
+import Icon_i from 'react-native-vector-icons/Ionicons';
 
-
-
-var Icon_i = require('react-native-vector-icons/Ionicons');
 
 //var Mymap = require('./src/places/map');
 //var MyIndoormap = require('./src/places/huxley_in');
@@ -28,15 +30,41 @@ const SEARCH_NORMAL = <Icon_i name='ios-search' size={25} color="#BBBBBB"/>;
 const SEARCH_FOCUS = <Icon_i name='ios-search' size={25} color="#19CAB6"/>;
 
 const PERSON = 'ios-person';
-const PERSON_NORMAL = <Icon_i name='ios-person' size={30} color="#BBBBBB"/>;
-const PERSON_FOCUS = <Icon_i name='ios-person' size={30} color="#19CAB6"/>;
+const PERSON_NORMAL = <Icon_i name='md-person' size={25} color="#BBBBBB"/>;
+const PERSON_FOCUS = <Icon_i name='md-person' size={25} color="#19CAB6"/>;
+
 
 
 
 export default class Mainview extends Component {
+    render() {
+        return (
+            <NavigatorIOS
+                style={styles.container}
+                initialRoute={{
+            title: '',
+            barTintColor: 'white',
+            navigationBarHidden: true,
+            titleTextColor: 'black',
+            component: Tabbar,
+          }}/>
+
+        );
+    }
+}
+
+
+
+class Tabbar extends Component {
     constructor(props) {
         super(props);
-        this.state = {selectedTab: HOME}
+        this.state = {selectedTab: HOME};
+        let UID123_object = {
+            height: 52,
+            paddingBottom: 52,
+            overflow: 'visible',
+        };
+        AsyncStorage.setItem('hide', JSON.stringify(UID123_object));
     }
 
     _renderTabItem(icon, selectedIcon, tag, childView) {
@@ -57,21 +85,21 @@ export default class Mainview extends Component {
         return (
             <View style={{flex:1}}>
                 <TabNavigator hidesTabTouch={true} tabBarStyle={styles.tab}>
-                    {/*tabBarStyle={{ height: 0, overflow: 'hidden' }}*/}
-                    {/*sceneStyle={{ paddingBottom: 0 }}>*/}
-                    {this._renderTabItem(HOME_NORMAL, HOME_FOCUS, HOME, <Myhome/>)}
+                    {this._renderTabItem(HOME_NORMAL, HOME_FOCUS, HOME, <Myhome nav={this.props}/>)}
 
-                    {this._renderTabItem(SEARCH_NORMAL, SEARCH_FOCUS, SEARCH, <View/>)}
-
-                    {this._renderTabItem(PERSON_NORMAL, PERSON_FOCUS, PERSON, <View/>)}
+                    {this._renderTabItem(PERSON_NORMAL, PERSON_FOCUS, PERSON, <Myperson nav={this.props}/>)}
                 </TabNavigator>
-                {StatusBar.setBarStyle("default")}
+                {StatusBar.setBarStyle("light-content")}
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
+    container: {
+        //marginTop: -20,
+        flex: 1,
+    },
     tab: {
         height: 52,
         backgroundColor: 'white',//'#19CAB6',
