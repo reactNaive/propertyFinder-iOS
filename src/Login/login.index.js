@@ -34,48 +34,48 @@ export default class loginPage extends Component {
 
     //create user
     _register() {
-        var ref = new Firebase('https://ic-tour-test.firebaseio.com');
-        ref.createUser({
-            email    : this.state.username,
-            password : this.state.password
-        }, (error, userData) => {
-            if (error) {
-                console.log("Error creating user:", error);
-            } else {
-                console.log("Successfully created user account with uid:", userData.id);
-            }
-        });
+        // var ref = new Firebase('https://ic-tour-test.firebaseio.com');
+        // ref.createUser({
+        //     email    : this.state.username,
+        //     password : this.state.password
+        // }, (error, userData) => {
+        //     if (error) {
+        //         console.log("Error creating user:", error);
+        //     } else {
+        //         console.log("Successfully created user account with uid:", userData.id);
+        //     }
+        // });
     }
 
     //logging users in
     _login() {
-        var ref = new Firebase('https://ic-tour-test.firebaseio.com');
-        ref.authWithPassword({
-            email    : this.state.username,
-            password : this.state.password
-        }, (error, authData) => {
-            if (error) {
-                // Works on both iOS and Android
-                Alert.alert(
-                    'Login Failed',
-                    'Incorrect username or password',
-                    [
-                        {text: 'OK', onPress: () => console.log('OK Pressed')},
-                    ]
-                )
-            } else {
-                console.log("Authenticated successfully with passwd:", authData);
-                ref.onAuth(authData => {
-                    if (authData) {
-                        // save the user's profile into the database so we can list users,
-                        // use them in Security and Firebase Rules, and show profiles
-                        this.name = authData.password.email;
-                        this.setState({uid: authData.uid});
-
-                    }
-                });
-            }
-        });
+        // var ref = new Firebase('https://ic-tour-test.firebaseio.com');
+        // ref.authWithPassword({
+        //     email    : this.state.username,
+        //     password : this.state.password
+        // }, (error, authData) => {
+        //     if (error) {
+        //         // Works on both iOS and Android
+        //         Alert.alert(
+        //             'Login Failed',
+        //             'Incorrect username or password',
+        //             [
+        //                 {text: 'OK', onPress: () => console.log('OK Pressed')},
+        //             ]
+        //         )
+        //     } else {
+        //         console.log("Authenticated successfully with passwd:", authData);
+        //         ref.onAuth(authData => {
+        //             if (authData) {
+        //                 // save the user's profile into the database so we can list users,
+        //                 // use them in Security and Firebase Rules, and show profiles
+        //                 this.name = authData.password.email;
+        //                 this.setState({uid: authData.uid});
+        //
+        //             }
+        //         });
+        //     }
+        // });
     }
 
     onUserNameChanged(e) {

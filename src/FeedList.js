@@ -10,9 +10,12 @@ import {
     NavigatorIOS,
     AsyncStorage,
     Picker,
+    ScrollView,
     StatusBar,
+    Animated,
 } from 'react-native';
 
+const ZERO = 0.000000001;
 const ICRSSURL = 'www3.imperial.ac.uk/newsapp/feed/college/news/';
 import FeedView from './FeedDetail';
 
@@ -25,6 +28,10 @@ const {width, height} = Dimensions.get('window');
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+const SUZHOU = ["姑苏区","虎丘区","吴中区","相城区","吴江区","工业园区","常熟市","张家港市","昆山市","太仓市"];
+const PRICE = ["500以下", "500-800", "800-1000", "1000-1500", "1500-2000","2000-3000","3000-5000","5000以上"];
+const HOUSETYPE = ["不限","一室","两室","三室","四室以上"];
+const ORDER = ["租金从低到高","租金从高到低"];
 
 function convert(input){
     return input*width/320;
@@ -66,7 +73,11 @@ export default class home extends Component {
             dataSource: dataSource,
             dataSource2: dataSource,
             result: false,
-
+            flex: ZERO,
+            tabName: "区域",
+            city: "苏州",
+            tabColors: ['white','#EAEAEA','#EAEAEA','#EAEAEA'],
+            fadeAnim: new Animated.Value(0), // init opacity 0
         };
     }
 
@@ -74,6 +85,7 @@ export default class home extends Component {
         //this.refs.searchBar.focus();
 
         this.fetchData(ICRSSURL);
+
     }
 
     fetchData(query) {
@@ -151,17 +163,34 @@ export default class home extends Component {
         //
         console.log("hello");
         if(this.state.result===false){
-            return <ListView //style={{marginTop: -20}}
+            return <ListView style={{flex: 1}}
                 dataSource={this.state.dataSource}
                 renderRow={this.renderRow.bind(this)}
             />
         } else {
-            return <ListView //style={{marginTop: -20}}
+            return <ListView style={{flex: 1}}
                 dataSource={this.state.dataSource2}
                 renderRow={this.renderRow.bind(this)}
                 keyboardDismissMode='interactive'
                 keyboardShouldPersistTaps={true}
             />
+        }
+    }
+
+    filter() {
+        this.refs.searchBar.blur();
+        if(this.state.flex === ZERO) {
+            this.setState({flex: 0.6});
+            Animated.timing(          // Uses easing functions
+                this.state.fadeAnim,    // The value to drive
+                {toValue: 1}            // Configuration
+            ).start();                // Don't forget start!
+        } else {
+            this.setState({flex: ZERO});
+            Animated.timing(          // Uses easing functions
+                this.state.fadeAnim,    // The value to drive
+                {toValue: 0}            // Configuration
+            ).start();                // Don't forget start!
         }
     }
 
@@ -174,7 +203,7 @@ export default class home extends Component {
         return (
             <TouchableHighlight onPress={() => this.rowPressed(rowData)}
                                 underlayColor='#dddddd'
-                                style={{marginTop: top}}
+
             >
                 <View>
                     <View style={styles.rowContainer}>
@@ -196,6 +225,75 @@ export default class home extends Component {
         
     }
 
+    renderFilterTab(tabName){
+
+        return(
+        <TouchableHighlight
+            style={[styles.tab,{backgroundColor: this.state.tabColors[this.getNum(tabName)]}]}
+            onPress={() => this.selection(tabName)}
+            underlayColor='white'
+        >
+            <Text style={styles.tabText}>{tabName}</Text>
+        </TouchableHighlight>
+        );
+    }
+
+    getNum(tabName) {
+        switch(tabName) {
+            case "区域":
+                return 0;
+            case "价格":
+                return 1;
+            case "房型":
+                return 2;
+            case "排序":
+                return 3;
+        }
+    }
+
+    selection(tabName) {
+        var list = ['#EAEAEA','#EAEAEA','#EAEAEA','#EAEAEA'];
+        list[this.getNum(tabName)] = 'white';
+        this.setState({
+            tabName: tabName,
+            tabColors: list,
+        });
+    }
+
+    renderSelection() {
+        switch(this.state.tabName) {
+            case "区域":
+                return this.tabs(SUZHOU);
+            case "价格":
+                return this.tabs(PRICE);
+            case "房型":
+                return this.tabs(HOUSETYPE);
+            case "排序":
+                return this.tabs(ORDER);
+        }
+    }
+
+    tabs(a) {
+        var list = [];
+        for (e in a) {
+            list.push(<TouchableHighlight
+                key={e}
+                style={[styles.tab, {borderBottomWidth: 0.5, borderBottomColor: 'lightgrey'}]}
+                onPress={() => this.selectFilter()}
+                underlayColor='#EAEAEA'
+            >
+                <Text style={styles.tabText}>
+                    {a[e]}
+                </Text>
+            </TouchableHighlight>);
+        }
+        return list;
+    }
+
+    selectFilter() {
+
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -211,11 +309,26 @@ export default class home extends Component {
                             barTintColor='#19CAB6'
                         />
                     </View>
-                    <TouchableOpacity style={styles.cube} onPress={() => this.refs.searchBar.blur()}>
+                    <TouchableOpacity style={styles.cube} onPress={() => this.filter()}>
                         <Icon name='tune' size={25} color='white'/>
                     </TouchableOpacity>
                 </View>
-                {this._showresult()}
+                <View style={{flex: 1}}>
+                    <ScrollView style={{flex: ZERO}} />
+                    <Animated.View style={[styles.filter,{flex: this.state.flex, opacity: this.state.fadeAnim}]}>
+                        <ScrollView style={{flex: 2, backgroundColor: '#EAEAEA'}}>
+                            {this.renderFilterTab('区域')}
+                            {this.renderFilterTab('价格')}
+                            {this.renderFilterTab('房型')}
+                            {this.renderFilterTab('排序')}
+                        </ScrollView>
+                        <ScrollView style={{flex: 3}}>
+                            {this.renderSelection()}
+                        </ScrollView>
+                    </Animated.View>
+
+                        {this._showresult()}
+                </View>
                 {StatusBar.setBarStyle("light-content")}
             </View>
         )
@@ -296,8 +409,20 @@ var styles = StyleSheet.create({
         //borderColor:"blue",
         //borderWidth: 1,
     },
-
-
+    filter: {
+        flexDirection: 'row',shadowColor: 'black',
+        shadowOffset: { height: 2, width: 0 },
+        shadowOpacity: 0.05,
+        shadowRadius: 3,
+    },
+    tab: {
+        height: height/14*3/4,
+        justifyContent: 'center',
+    },
+    tabText: {
+        paddingLeft: 15,
+        fontSize: 15,
+    }
 });
 
 
