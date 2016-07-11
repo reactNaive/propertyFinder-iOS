@@ -34,7 +34,7 @@ export default class FeedDetail extends Component {
 
     rengerImg() {
         var rows = [];
-        for (var j=0; j < this.entry.img.length; j++) {
+        for (var j=0; j < 3; j++) {
             rows.push(<View style={styles.slide1} key={j}>
                 <Image
                     style={styles.img}
