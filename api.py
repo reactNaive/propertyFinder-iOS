@@ -2,6 +2,8 @@ from flask import Flask, jsonify, request, make_response,redirect,url_for
 from flask_restful import reqparse, abort, Api, Resource
 from flask_pymongo import PyMongo
 from flask_httpauth import HTTPBasicAuth
+from itsdangerous import (TimedJSONWebSignatureSerializer
+                          as Serializer, BadSignature, SignatureExpired)
 
 UPLOAD_FOLDER = 'file-uploads'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
@@ -9,6 +11,7 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 app = Flask(__name__)
 app.config["MONGO_DBNAME"] = "property"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['SECRET_KEY'] = 'this is a property app'
 mongo = PyMongo(app)
 api = Api(app)
 auth = HTTPBasicAuth()
@@ -36,6 +39,7 @@ USERS = {
 @auth.get_password
 def get_password(username):
   user = mongo.db.users.find_one({"username": username})
+
   if user:
     return user.get('password')
   return None
@@ -69,6 +73,8 @@ class House(Resource):
     return jsonify({"response": data})
 
   def delete(self, house_name):
+    if house_name == "*":
+      mongo.db.houses.remove()
     mongo.db.houses.remove({'name': house_name})
     return '', 204
 
@@ -76,6 +82,12 @@ class House(Resource):
     data = request.get_json()
     mongo.db.houses.update({'name': house_name}, {'$set': data})
     return "ok", 201
+
+  def post(self, house_name):
+    data = request.get_json()
+    if house_name == "*":
+        mongo.db.houses.insert(data)
+    return {"response": "post ok"}
 
 class Image(Resource):
   # decorators = [auth.login_required]
@@ -122,6 +134,61 @@ class HouseList(Resource):
       else:
         return {"response": "name missing"}
 
+def generate_auth_token(username, expiration=600):
+  gen_serial = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
+  return gen_serial.dumps({'username': username})
+
+class User(Resource):
+  decorators = [auth.login_required]
+  def get(self, user_id):
+    data = []
+
+    if user_id:
+      user_info = mongo.db.users.find_one({"username": user_id}, {"_id": 0})
+      if user_info:
+        return jsonify({"status": "ok", "data": user_info})
+      else:
+        return {"response": "no user found for {}".format(user_id)}
+    return jsonify({"response": data})
+
+  def delete(self, user_id):
+    mongo.db.users.remove({'username': user_id})
+    return '', 204
+
+  def put(self, user_id):
+    data = request.get_json()
+    mongo.db.users.update({'username': user_id}, {'$set': data})
+    return "ok", 201
+
+class UserList(Resource):
+
+  def get(self):
+    data = []
+
+    cursor = mongo.db.users.find({}, {"_id": 0, "update_time": 0}).limit(10)
+
+    for user in cursor:
+      #print house
+      #house = APP_URL + "/" + house.get('name')
+      data.append(user)
+
+    return jsonify({"response": data})
+
+  def post(self):
+    data = request.get_json()
+    if not data:
+      data = {"response": "ERROR"}
+      return jsonify(data)
+    else:
+      username = data.get('username')
+      if username:
+        if mongo.db.users.find_one({"username": username}):
+          return {"response": "username already exists."}
+        else:
+          mongo.db.users.insert(data)
+          return {"response": "post ok"}
+      else:
+        return {"response": "username missing"}
 
 ##
 ## Actually setup the Api resource routing here
@@ -129,6 +196,8 @@ class HouseList(Resource):
 api.add_resource(HouseList, '/', endpoint="houses")
 api.add_resource(House, '/<house_name>', endpoint="name")
 api.add_resource(Image, '/<house_name>/<filename>', endpoint="image")
+api.add_resource(UserList, '/users', endpoint="users")
+api.add_resource(User, '/users/<user_id>', endpoint="username")
 
 @app.after_request
 def after_request(response):

@@ -14,11 +14,13 @@ import {
     StatusBar,
 } from 'react-native';
 
+import base64 from 'base-64';
+
 import Icon from 'react-native-vector-icons/Ionicons';
 
 var { width, height } = Dimensions.get('window');
 
-
+const url = "http://54.171.189.58/users";
 
 export default class loginPage extends Component {
 
@@ -34,6 +36,17 @@ export default class loginPage extends Component {
 
     //create user
     _register() {
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: this.state.username,
+                password: this.state.password,
+            })
+        })
         // var ref = new Firebase('https://ic-tour-test.firebaseio.com');
         // ref.createUser({
         //     email    : this.state.username,
@@ -49,6 +62,24 @@ export default class loginPage extends Component {
 
     //logging users in
     _login() {
+        //const hash = new Buffer(`${this.state.username}:${this.state.password}`).toString('base64')
+        fetch(url+"/"+this.state.username, {
+            method: 'get',
+            headers: {
+                'Authorization': 'Basic '+base64.encode(`${this.state.username}:${this.state.password}`),
+            },
+        })
+            .then((response) => response.json())
+            .then((responseJson) => {
+                console.log(responseJson);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+
+
+
+
         // var ref = new Firebase('https://ic-tour-test.firebaseio.com');
         // ref.authWithPassword({
         //     email    : this.state.username,

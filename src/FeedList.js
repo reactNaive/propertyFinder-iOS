@@ -15,6 +15,7 @@ import {
     Animated,
 } from 'react-native';
 
+
 const ZERO = 0.000000001;
 import FeedView from './FeedDetail';
 
@@ -35,10 +36,19 @@ function convert(input){
     return input*width/320;
 }
 
+function sortJSON(data, key, way) {
+    return data.sort(function(a, b) {
+        var x = parseInt(a[key]); var y = parseInt(b[key]);
+        if (way === '123' ) { return ((x < y) ? -1 : ((x > y) ? 1 : 0)); }
+        if (way === '321') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }
+    });
+}
+
 // const drawerStyles = StyleSheet.create({
 //     drawer: { shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3},
 //     main: {paddingLeft: 3},
 // })
+
 
 export default class home extends Component {
 
@@ -48,6 +58,9 @@ export default class home extends Component {
         super(props);
         var dataSource = new ListView.DataSource(
             {rowHasChanged: (r1, r2) => r1 !== r2});
+
+
+
         this.state = {
             entries: [],
             dataSource: dataSource,
@@ -63,73 +76,47 @@ export default class home extends Component {
             tabColors: ['white','#EAEAEA','#EAEAEA','#EAEAEA'],
             tabColors2: [[],[],[],[]],
 
-
-
             condition: ['不限','不限','不限','不限',],
 
             fadeAnim: new Animated.Value(0), // init opacity 0
         };
     }
-
     componentWillMount() {
         //this.refs.searchBar.focus();
 
         this.fetchData();
 
+
+
     }
+    componentDidMount(){
 
+    }
     fetchData() {
-        //console.log(query);
-        // if (!(/^http:\/\//.test(query))) {
-        //     query = "http://" + query;
-        // }
-        //
-        // var GOOGLE_FEED_API_URL = "https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q="
-        var query = "http://54.171.189.58:5000/";
-
-        //console.log("hello123");
+        var query = "http://54.171.189.58/";
         // console.log(this.state.dataSource.cloneWithRows(Josnnnn.house.filter(item=>item.name=="aaa")));
-
         fetch(query)
             .then((response) => response.json())
             .then((json) => {
-                //console.log(json);
-                //console.log(json.response);
-
-
 
 
                 this.setState({
                     //entries: json.responseData.feed.entries,
                     dataSource: this.state.dataSource.cloneWithRows(json.response),
                     //dataSource2: this.state.dataSource.cloneWithRows(Josnnnn.house.filter(item=>item.score==1)),
-
-                    newdataSource: json.response,
+                    newdataSource: sortJSON(json.response,"price", '123'),
                     loaded: true,
                 });
+
+                // this.setState({
+                //     newdataSource: sortJSON(this.state.newdataSource,"price", '123'),
+                // });
+
+
             })
-            .done();
-
-
-
-        // var query1 = "http://100.77.189.39:8983/solr/bingwei_t1/select?indent=on&q=*:*&wt=json";
-        //
-        // //console.log("hello123");
-        // // console.log(this.state.dataSource.cloneWithRows(Josnnnn.house.filter(item=>item.name=="aaa")));
-        //
-        // fetch(query1)
-        //     .then((response) => response.json())
-        //     .then((json) => {
-        //         console.log(json);
-        //         //console.log(json.response);
-        //
-        //
-        //
-        //
-        //
-        //     })
-        //     .done();
-
+            .catch(function(error) {
+                console.log('request failed', error)
+            });
 
 
     }
@@ -238,6 +225,9 @@ export default class home extends Component {
 
     renderRow(rowData, sectionID, rowID) {
 
+
+        // console.log("rowData123");
+        // console.log(rowData);
         // var top=0;
         // if(rowID == 0) {
         //     top = -20;
@@ -245,6 +235,7 @@ export default class home extends Component {
         return (
             <TouchableHighlight onPress={() => this.rowPressed(rowData)}
                                 underlayColor='#dddddd'
+                                key={Math.random()}
 
             >
                 <View>
@@ -304,6 +295,7 @@ export default class home extends Component {
         console.log("tab1");
         console.log(this.state.tabName);
 
+
     }
 
     renderSelection() {
@@ -358,11 +350,9 @@ export default class home extends Component {
         for (var i=0;i<array_length;i++){
             list[i]='white';
         }
-
         // var list = ['#EAEAEA','#EAEAEA','#EAEAEA','#EAEAEA'];
         list[count] = '#EAEAEA';
         tabColors2[menu]= list;
-
 
         var condition=this.state.condition;
         condition[menu]=e;
@@ -372,8 +362,6 @@ export default class home extends Component {
             tabColors2: tabColors2,
             condition: condition,
         });
-
-
 
         var price_low;
         var price_high;
@@ -445,9 +433,10 @@ export default class home extends Component {
         console.log("cojjjjjjjjjjjjjjjjjjjjjjjjjjnditon");
         console.log(this.state.condition);
 
-        console.log("filter");
+        var data = this.state.newdataSource.slice();
+
+
         //console.log(this.state.newdataSource.filter(item => item.price>price_low ).filter(item => item.price<price_high));
-        var data = this.state.newdataSource;
 
         if(this.state.condition[0]!="不限"){
             data = data
@@ -463,28 +452,46 @@ export default class home extends Component {
         if(no_type===false) {
             if(bed != 4) {
                 data = data
-                    .filter(item =>item.bed === bed);
+                    .filter(item =>parseInt(item.bed) === bed);
             } else {
                 data = data
-                    .filter(item =>item.bed >= 4);
+                    .filter(item =>parseInt(item.bed) >= 4);
             }
         }
+        if(this.state.condition[3]==="租金从低到高") {
+            data = sortJSON(data, "price", '123');
+            console.log("租金从低到高123");
+        }
+        if(this.state.condition[3]==="租金从高到低") {
+            data = sortJSON(data, "price", '321');
+            console.log("租金从高到低321");
+        }
+
+        var newDs = [];
+        newDs = data;
+
+
+        // newDs.map((newDs)=>newDs.price=newDs.price+1);
+
+
+        console.log("data");
+        console.log(newDs);
+
 
 
         this.setState({
+            // newdataSource: data,
             dataSource: this.state.dataSource.cloneWithRows(data),
         });
 
-        console.log(data);
+        console.log("dataSource");
         console.log(this.state.dataSource);
-
-
-
-
-
-
-
     }
+    // componentWillReceiveProps( nextProps ) {
+    //     this.setState({
+    //         dataSource: this.state.dataSource.cloneWithRows( nextProps.data )
+    //     });
+    // }
 
     render() {
         return (
@@ -519,10 +526,13 @@ export default class home extends Component {
                         </ScrollView>
                     </Animated.View>
 
+
+
                     <ListView style={{flex: 1}}
                               dataSource={this.state.dataSource}
                               renderRow={this.renderRow.bind(this)}
-                    />
+                    >
+                    </ListView>
                 </View>
                 {StatusBar.setBarStyle("light-content")}
             </View>
@@ -530,8 +540,6 @@ export default class home extends Component {
     }
 
 }
-
-
 
 var styles = StyleSheet.create({
     thumb: {
