@@ -16,10 +16,8 @@ import {
 } from 'react-native';
 
 const ZERO = 0.000000001;
-const ICRSSURL = 'www3.imperial.ac.uk/newsapp/feed/college/news/';
 import FeedView from './FeedDetail';
 
-import Josnnnn from './property.json';
 import SearchBar from 'react-native-search-bar';
 
 import Dimensions from 'Dimensions';
@@ -37,28 +35,10 @@ function convert(input){
     return input*width/320;
 }
 
-const drawerStyles = StyleSheet.create({
-    drawer: { shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3},
-    main: {paddingLeft: 3},
-})
-//
-// export default class drawer extends Component {
-//
-//     render() {
-//         return (
-//             <Drawer
-//                 type="static"
-//                 content={<View />}
-//                 openDrawerOffset={100}
-//                 styles={drawerStyles}
-//                 tweenHandler={Drawer.tweenPresets.parallax}
-//             >
-//                 <Main />
-//             </Drawer>
-//
-//         )
-//     }
-// }
+// const drawerStyles = StyleSheet.create({
+//     drawer: { shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3},
+//     main: {paddingLeft: 3},
+// })
 
 export default class home extends Component {
 
@@ -129,6 +109,28 @@ export default class home extends Component {
                 });
             })
             .done();
+
+
+
+        // var query1 = "http://100.77.189.39:8983/solr/bingwei_t1/select?indent=on&q=*:*&wt=json";
+        //
+        // //console.log("hello123");
+        // // console.log(this.state.dataSource.cloneWithRows(Josnnnn.house.filter(item=>item.name=="aaa")));
+        //
+        // fetch(query1)
+        //     .then((response) => response.json())
+        //     .then((json) => {
+        //         console.log(json);
+        //         //console.log(json.response);
+        //
+        //
+        //
+        //
+        //
+        //     })
+        //     .done();
+
+
 
     }
 

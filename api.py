@@ -1,0 +1,156 @@
+from flask import Flask, jsonify, request, make_response,redirect,url_for
+from flask_restful import reqparse, abort, Api, Resource
+from flask_pymongo import PyMongo
+from flask_httpauth import HTTPBasicAuth
+
+UPLOAD_FOLDER = 'file-uploads'
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+
+app = Flask(__name__)
+app.config["MONGO_DBNAME"] = "property"
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+mongo = PyMongo(app)
+api = Api(app)
+auth = HTTPBasicAuth()
+
+APP_URL = "http://127.0.0.1:5000"
+
+USERS = {
+  'user1': {
+    'username': 'user1',
+    'password': '123',
+    'img': 'build an API'
+  },
+  'user2': {
+    'username': 'user2',
+    'password': '123',
+    'img': 'build an API'
+  },
+  'user3': {
+    'username': 'user3',
+    'password': '123',
+    'img': 'build an API'
+  },
+}
+
+@auth.get_password
+def get_password(username):
+  user = mongo.db.users.find_one({"username": username})
+  if user:
+    return user.get('password')
+  return None
+
+
+@auth.error_handler
+def unauthorized():
+  # return 403 instead of 401 to prevent browsers from displaying the default
+  # auth dialog
+  return make_response(jsonify({'message': 'Unauthorized access'}), 403)
+
+def abort_if_user_doesnt_exist(user_id):
+  if user_id not in USERS:
+    abort(404, message="User {} doesn't exist".format(user_id))
+
+parser = reqparse.RequestParser()
+parser.add_argument('img')
+
+
+class House(Resource):
+  # decorators = [auth.login_required]
+  def get(self, house_name):
+    data = []
+
+    if house_name:
+      house_info = mongo.db.houses.find_one({"name": house_name}, {"_id": 0})
+      if house_info:
+        return jsonify({"status": "ok", "data": house_info})
+      else:
+        return {"response": "no house found for {}".format(house_name)}
+    return jsonify({"response": data})
+
+  def delete(self, house_name):
+    mongo.db.houses.remove({'name': house_name})
+    return '', 204
+
+  def put(self, house_name):
+    data = request.get_json()
+    mongo.db.houses.update({'name': house_name}, {'$set': data})
+    return "ok", 201
+
+class Image(Resource):
+  # decorators = [auth.login_required]
+  def get(self, house_name, filename):
+    filename = house_name + '_' + filename
+    print filename
+    return mongo.send_file(filename)
+
+  def post(self, house_name, filename):
+    print(request.files['file'])
+    filename = house_name + '_' + filename
+    print filename
+    mongo.save_file(filename,request.files['file'])
+    return mongo.send_file(filename)
+
+
+class HouseList(Resource):
+  # decorators = [auth.login_required]
+  def get(self):
+    data = []
+
+    cursor = mongo.db.houses.find({}, {"_id": 0, "update_time": 0}).limit(10)
+
+    for house in cursor:
+        #print house
+        #house = APP_URL + "/" + house.get('name')
+        data.append(house)
+
+    return jsonify({"response": data})
+
+  def post(self):
+    data = request.get_json()
+    if not data:
+      data = {"response": "ERROR"}
+      return jsonify(data)
+    else:
+      name = data.get('name')
+      if name:
+        if mongo.db.houses.find_one({"name": name}):
+          return {"response": "house already exists."}
+        else:
+          mongo.db.houses.insert(data)
+          return {"response": "post ok"}
+      else:
+        return {"response": "name missing"}
+
+
+##
+## Actually setup the Api resource routing here
+##
+api.add_resource(HouseList, '/', endpoint="houses")
+api.add_resource(House, '/<house_name>', endpoint="name")
+api.add_resource(Image, '/<house_name>/<filename>', endpoint="image")
+
+@app.after_request
+def after_request(response):
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With')
+  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+  response.headers.add('Access-Control-Allow-Credentials', 'true')
+  return response
+
+# @app.after_request
+# def add_cors(resp):
+#   """ Ensure all responses have the CORS headers. This ensures any failures are also accessible
+#       by the client. """
+#   resp.headers['Access-Control-Allow-Origin'] = Flask.request.headers.get('Origin','*')
+#   resp.headers['Access-Control-Allow-Credentials'] = 'true'
+#   resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS, GET'
+#   resp.headers['Access-Control-Allow-Headers'] = Flask.request.headers.get(
+#     'Access-Control-Request-Headers', 'Authorization' )
+#   # set low for debugging
+#   if app.debug:
+#     resp.headers['Access-Control-Max-Age'] = '1'
+#   return resp
+
+if __name__ == '__main__':
+  app.run(debug=True, host='0.0.0.0')
