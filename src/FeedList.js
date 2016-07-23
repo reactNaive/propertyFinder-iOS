@@ -148,16 +148,20 @@ export default class home extends Component {
     }
 
     rowPressed(rowData) {
-        let UID123_object = {
-            height: 0,
-            paddingBottom: 0,
-            overflow: 'hidden'
-        };
-        AsyncStorage.mergeItem('hide', JSON.stringify(UID123_object));
+
+        console.log("rowData");
+        console.log(rowData);
+
+        // let UID123_object = {
+        //     height: 0,
+        //     paddingBottom: 0,
+        //     overflow: 'hidden'
+        // };
+       // AsyncStorage.mergeItem('hide', JSON.stringify(UID123_object));
         //var entry = this.state.entries.filter(prop => prop.title === rowTitle)[0];
         //console.log(rowData.name);
         this.props.nav.navigator.push({
-            title: rowData.name,
+            title: rowData.name[0],
             titleTextColor: 'white',
             barTintColor: '#19CAB6',
             tintColor: 'white',
@@ -509,15 +513,15 @@ export default class home extends Component {
 
         var solr_url_3_fq_sort="";
 
-        solr_url=solr_query_1+solr_seach;
+       // solr_url=solr_query_1+solr_seach;
 
         if(this.state.condition[0]!="不限"){
             //solr
             fq_region="&fq=region:"+this.state.condition[0];
             solr_url_3_fq_sort=solr_url_3_fq_sort+fq_region;
 
-            data = data
-                .filter(item => item.region === this.state.condition[0]);
+            // data = data
+            //     .filter(item => item.region === this.state.condition[0]);
         }
 
         if(no_price===false) {
@@ -527,9 +531,9 @@ export default class home extends Component {
 
 
 
-            data = data
-                .filter(item => item.price >= price_low)
-                .filter(item => item.price < price_high);
+            // data = data
+            //     .filter(item => item.price >= price_low)
+            //     .filter(item => item.price < price_high);
         }
 
         if(no_type===false) {
@@ -540,15 +544,15 @@ export default class home extends Component {
                 solr_url_3_fq_sort=solr_url_3_fq_sort+fq_type;
 
 
-                data = data
-                    .filter(item =>parseInt(item.bed) === bed);
+                // data = data
+                //     .filter(item =>parseInt(item.bed) === bed);
             } else {
                 fq_type="&fq=bedroom: [4 TO "+bed+" ]";
                 solr_url_3_fq_sort=solr_url_3_fq_sort+fq_type;
 
 
-                data = data
-                    .filter(item =>parseInt(item.bed) >= 4);
+                // data = data
+                //     .filter(item =>parseInt(item.bed) >= 4);
             }
         }
         if(this.state.condition[3]==="租金从低到高") {
@@ -557,8 +561,8 @@ export default class home extends Component {
             solr_url_3_fq_sort=solr_url_3_fq_sort+sort_price;
 
 
-            data = sortJSON(data, "price", '123');
-            console.log("租金从低到高123");
+            // data = sortJSON(data, "price", '123');
+            // console.log("租金从低到高123");
         }
         if(this.state.condition[3]==="租金从高到低") {
             //solr
@@ -566,12 +570,12 @@ export default class home extends Component {
             solr_url_3_fq_sort=solr_url_3_fq_sort+sort_price;
 
 
-            data = sortJSON(data, "price", '321');
-            console.log("租金从高到低321");
+            // data = sortJSON(data, "price", '321');
+            // console.log("租金从高到低321");
         }
 
-        var newDs = [];
-        newDs = data;
+        // var newDs = [];
+        // newDs = data;
 
 
         // newDs.map((newDs)=>newDs.price=newDs.price+1);
@@ -590,8 +594,8 @@ export default class home extends Component {
         this.fetch_solr(this.state.solr_url);
 
 
-        console.log("data");
-        console.log(newDs);
+        // console.log("data");
+        // console.log(newDs);
 
 
 

@@ -55,7 +55,7 @@ export default class FeedDetail extends Component {
                         </Swiper>
                         <View style={styles.head}>
                             <Text style={{paddingTop: 3, paddingBottom: 5,fontSize: 16,color: 'black',fontWeight: 'bold',paddingLeft: 15}}>{this.entry.name}</Text>
-                            <Text style={[styles.text1,{fontSize: 15, color: '#397CDC', paddingTop:4, paddingBottom: 1}]}>{this.entry.price}万元</Text>
+                            <Text style={[styles.text1,{fontSize: 15, color: '#397CDC', paddingTop:4, paddingBottom: 1}]}>{this.entry.price_1}万元</Text>
                         </View>
 
                         <View style={styles.body1}>
