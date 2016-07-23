@@ -67,6 +67,14 @@ export default class home extends Component {
             dataSource2: dataSource,
 
             newdataSource: [],
+            solr_json:[],
+
+            solr_url:"http://54.171.189.58:8983/solr/gettingstarted/select?indent=on&q=*:*&wt=json",
+
+            solr_url_1:"http://54.171.189.58:8983/solr/gettingstarted/select?indent=on&wt=json",
+            solr_url_2_search:"&q=*:*",
+            solr_url_3_fq_sort: "",
+
 
             result: false,
             flex: ZERO,
@@ -84,13 +92,31 @@ export default class home extends Component {
     componentWillMount() {
         //this.refs.searchBar.focus();
 
-        this.fetchData();
+        //this.fetchData();
+        //var solr_query = "http://54.171.189.58:8983/solr/gettingstarted/select?indent=on&q=*:*&wt=json";
+        this.fetch_solr(this.state.solr_url);
 
 
 
     }
     componentDidMount(){
 
+    }
+    fetch_solr(solr_query){
+
+        fetch(solr_query)
+            .then((response) => response.json())
+            .then((json) => {
+                this.setState({
+                    solr_json: json.response.docs,
+                    dataSource:this.state.dataSource.cloneWithRows(json.response.docs)
+                });
+                // console.log("json.response");
+                // console.log(json.response.docs);
+            })
+            .catch(function(error) {
+                console.log('request failed', error)
+            });
     }
     fetchData() {
         var query = "http://54.171.189.58/";
@@ -146,10 +172,34 @@ export default class home extends Component {
 
     _search() {
         if (this.state.searchContent === '') {
-            return AlertIOS.alert(
-                '内容不能为空'
-            );
+            this.setState({
+                solr_url_2_search:"&q=*:*"
+            });
+            // return AlertIOS.alert(
+            //     '内容不能为空'
+            // );
+            //this.state.searchContent
+
         }
+        else{
+            this.state.solr_url_2_search="&q="+this.state.searchContent;
+            this.setState({
+                solr_url_2_search:this.state.solr_url_2_search
+            });
+        }
+
+        this.state.solr_url=this.state.solr_url_1+this.state.solr_url_2_search+this.state.solr_url_3_fq_sort;
+        this.setState({
+            solr_url:this.state.solr_url
+        });
+        this.fetch_solr(this.state.solr_url);
+
+        console.log("solr_url");
+        console.log(this.state.solr_url);
+        console.log("dataSource123");
+        console.log(this.state.dataSource);
+
+
         this.refs.searchBar.blur();
         var that = this;
         this.setState({loaded: false,
@@ -158,6 +208,8 @@ export default class home extends Component {
         var errLog = function (err) {
             console.log(err.message);
         };
+
+
     }
 
     _showresult(){
@@ -245,7 +297,7 @@ export default class home extends Component {
                             <View style={styles.rowContainer2}>
                                 <Text style={styles.title}
                                       numberOfLines={2}>{rowData.name}</Text>
-                                <Text style={styles.price} numberOfLines={1}>{rowData.price}</Text>
+                                <Text style={styles.price} numberOfLines={1}>{rowData.price_1}</Text>
                             </View>
                             <Text style={styles.type} numberOfLines={1}>{rowData.type} {rowData.area}平米</Text>
                             <Text style={styles.adv} numberOfLines={1}>{rowData.adv}</Text>
@@ -363,6 +415,13 @@ export default class home extends Component {
             condition: condition,
         });
 
+
+        //solr change
+
+
+
+
+
         var price_low;
         var price_high;
         var no_price=true;
@@ -438,31 +497,75 @@ export default class home extends Component {
 
         //console.log(this.state.newdataSource.filter(item => item.price>price_low ).filter(item => item.price<price_high));
 
+        //solr
+        var solr_url;
+        var solr_query_1 = "http://54.171.189.58:8983/solr/gettingstarted/select?indent=on&wt=json";
+        var solr_seach="&q=*:*";
+
+        var fq_region;
+        var fq_price;
+        var fq_type;
+        var sort_price; //&sort=price asc
+
+        var solr_url_3_fq_sort="";
+
+        solr_url=solr_query_1+solr_seach;
+
         if(this.state.condition[0]!="不限"){
+            //solr
+            fq_region="&fq=region:"+this.state.condition[0];
+            solr_url_3_fq_sort=solr_url_3_fq_sort+fq_region;
+
             data = data
                 .filter(item => item.region === this.state.condition[0]);
         }
 
         if(no_price===false) {
+            //solr
+            fq_price="&fq=price_1: ["+price_low+" TO "+price_high+" ]";
+            solr_url_3_fq_sort=solr_url_3_fq_sort+fq_price;
+
+
+
             data = data
                 .filter(item => item.price >= price_low)
                 .filter(item => item.price < price_high);
         }
 
         if(no_type===false) {
+            //solr
+
             if(bed != 4) {
+                fq_type="&fq=bedroom: "+bed;
+                solr_url_3_fq_sort=solr_url_3_fq_sort+fq_type;
+
+
                 data = data
                     .filter(item =>parseInt(item.bed) === bed);
             } else {
+                fq_type="&fq=bedroom: [4 TO "+bed+" ]";
+                solr_url_3_fq_sort=solr_url_3_fq_sort+fq_type;
+
+
                 data = data
                     .filter(item =>parseInt(item.bed) >= 4);
             }
         }
         if(this.state.condition[3]==="租金从低到高") {
+            //solr
+            sort_price="&sort=price_1 asc";
+            solr_url_3_fq_sort=solr_url_3_fq_sort+sort_price;
+
+
             data = sortJSON(data, "price", '123');
             console.log("租金从低到高123");
         }
         if(this.state.condition[3]==="租金从高到低") {
+            //solr
+            sort_price="&sort=price_1 desc";
+            solr_url_3_fq_sort=solr_url_3_fq_sort+sort_price;
+
+
             data = sortJSON(data, "price", '321');
             console.log("租金从高到低321");
         }
@@ -472,6 +575,19 @@ export default class home extends Component {
 
 
         // newDs.map((newDs)=>newDs.price=newDs.price+1);
+        this.state.solr_url_3_fq_sort=solr_url_3_fq_sort;
+        this.setState({
+            solr_url_3_fq_sort:solr_url_3_fq_sort
+        });
+
+        this.state.solr_url=this.state.solr_url_1+this.state.solr_url_2_search+this.state.solr_url_3_fq_sort;
+        console.log("this.state.solr_url_filter");
+        console.log(this.state.solr_url);
+
+        this.setState({
+            solr_url:this.state.solr_url
+        });
+        this.fetch_solr(this.state.solr_url);
 
 
         console.log("data");
@@ -479,11 +595,11 @@ export default class home extends Component {
 
 
 
-        this.setState({
-            // newdataSource: data,
-            dataSource: this.state.dataSource.cloneWithRows(data),
-        });
-
+        // this.setState({
+        //     // newdataSource: data,
+        //     dataSource: this.state.dataSource.cloneWithRows(data),
+        // });
+        //
         console.log("dataSource");
         console.log(this.state.dataSource);
     }
