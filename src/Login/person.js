@@ -93,14 +93,9 @@ export default class person extends Component {
                         <Text style={styles.text1}>点击登录</Text>
                     </TouchableOpacity>
                 </View>
-                {this.renderRow('ios-checkmark', 'kkkkk', empty)}
-                {this.renderRow('ios-checkmark', 'aaaaa', empty)}
-                {this.renderRow('ios-checkmark', 'bbbbb', empty)}
-                {this.renderRow('ios-checkmark', 'ccccc', empty)}
-                {this.renderRow('ios-checkmark', 'ddddd', empty)}
-                {this.renderRow('ios-checkmark', 'eeeee', empty)}
-                {this.renderRow('ios-checkmark', 'fffff', empty)}
-                {this.renderRow('ios-checkmark', 'rrrrr', empty)}
+                {this.renderRow('ios-star-outline', '我的收藏', empty)}
+                {this.renderRow('ios-time-outline', '历史记录', empty)}
+
                 {StatusBar.setBarStyle("light-content")}
             </View>
 
@@ -124,7 +119,8 @@ const styles = StyleSheet.create({
         //backgroundColor: 'red',
     },
     login: {
-        flex: 2.5,
+        //flex: 2.5,
+        height: height/5,
         backgroundColor: '#19CAB6',
         // borderWidth: 1,
         // borderColor: 'red',
@@ -148,7 +144,7 @@ const styles = StyleSheet.create({
     },
     row: {
         //marginTop: 64,
-        flex: 1,
+        //flex: 1,
         //marginLeft: 20,
         //alignItems: 'center',
         //justifyContent: 'center',

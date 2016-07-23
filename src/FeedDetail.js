@@ -15,6 +15,7 @@ import {
 import Swiper from 'react-native-swiper';
 
 var Icon = require('react-native-vector-icons/MaterialIcons');
+import Icon_i from 'react-native-vector-icons/Ionicons';
 var { width, height } = Dimensions.get('window');
 
 const picHeight = (height-52-64)/2;
@@ -54,7 +55,10 @@ export default class FeedDetail extends Component {
                             {this.rengerImg()}
                         </Swiper>
                         <View style={styles.head}>
-                            <Text style={{paddingTop: 3, paddingBottom: 5,fontSize: 16,color: 'black',fontWeight: 'bold',paddingLeft: 15}}>{this.entry.name}</Text>
+                            <View style={{flexDirection: 'row'}}>
+                                <Text style={{flex: 1, paddingTop: 3, paddingBottom: 5,fontSize: 16,color: 'black',fontWeight: 'bold',paddingLeft: 15}}>{this.entry.name}</Text>
+                                <Icon_i style={{alignSelf: 'flex-end', paddingRight: 10}} name='ios-star-outline' size={25} color="#397CDC"/>
+                            </View>
                             <Text style={[styles.text1,{fontSize: 15, color: '#397CDC', paddingTop:4, paddingBottom: 1}]}>{this.entry.price_1}万元</Text>
                         </View>
 
