@@ -13,6 +13,7 @@ import {
     Alert,
     StatusBar,
 } from 'react-native';
+import Global from '../Global';
 
 import base64 from 'base-64';
 
@@ -20,7 +21,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 var { width, height } = Dimensions.get('window');
 
-const url = "http://54.171.189.58/users";
+const url = Global.url+"users";
 
 export default class loginPage extends Component {
 
@@ -45,20 +46,31 @@ export default class loginPage extends Component {
             body: JSON.stringify({
                 username: this.state.username,
                 password: this.state.password,
+                saved: []
             })
         })
+            .then((response) => response.json())
+            .then((responseJson) => {
+                console.log(responseJson);
+                Alert.alert("注册成功,请登录");
+            })
+            .catch((error) => {
+                console.log(error);
+            });
         // var ref = new Firebase('https://ic-tour-test.firebaseio.com');
         // ref.createUser({
-        //     email    : this.state.username,
-        //     password : this.state.password
+        //     email    : this.state.username,
+        //     password : this.state.password
         // }, (error, userData) => {
-        //     if (error) {
-        //         console.log("Error creating user:", error);
-        //     } else {
-        //         console.log("Successfully created user account with uid:", userData.id);
-        //     }
+        //     if (error) {
+        //         console.log("Error creating user:", error);
+        //     } else {
+        //         console.log("Successfully created user account with uid:", userData.id);
+        //     }
         // });
     }
+
+
 
     //logging users in
     _login() {
@@ -72,41 +84,25 @@ export default class loginPage extends Component {
             .then((response) => response.json())
             .then((responseJson) => {
                 console.log(responseJson);
+                Global.token = responseJson.token;
+                Global.username = this.state.username;
+                this.props.navigator.push({
+                    title: '信息',
+                    titleTextColor: 'white',
+                    barTintColor: '#19CAB6',
+                    navigationBarHidden: false,
+                    component: UserInfo,
+                    //rightButtonTitle: 'Go Inside',
+                    tintColor: 'white',
+                    //rightButtonIcon: require('image!NavBarButtonPlus'),
+                    onRightButtonPress: () => this.navigator.popN(3) ,
+                    //navigationBarHidden: true,
+                });
             })
             .catch((error) => {
-                console.error(error);
+                Alert.alert("用户名或密码错误");
+                console.log(error);
             });
-
-
-
-
-        // var ref = new Firebase('https://ic-tour-test.firebaseio.com');
-        // ref.authWithPassword({
-        //     email    : this.state.username,
-        //     password : this.state.password
-        // }, (error, authData) => {
-        //     if (error) {
-        //         // Works on both iOS and Android
-        //         Alert.alert(
-        //             'Login Failed',
-        //             'Incorrect username or password',
-        //             [
-        //                 {text: 'OK', onPress: () => console.log('OK Pressed')},
-        //             ]
-        //         )
-        //     } else {
-        //         console.log("Authenticated successfully with passwd:", authData);
-        //         ref.onAuth(authData => {
-        //             if (authData) {
-        //                 // save the user's profile into the database so we can list users,
-        //                 // use them in Security and Firebase Rules, and show profiles
-        //                 this.name = authData.password.email;
-        //                 this.setState({uid: authData.uid});
-        //
-        //             }
-        //         });
-        //     }
-        // });
     }
 
     onUserNameChanged(e) {
@@ -161,19 +157,31 @@ export default class loginPage extends Component {
                         style={styles.button}
                         underlayColor='#99d9f4'
                         onPress={this._register.bind(this)}>
-                        <Text style={styles.buttonText}>Register</Text>
+                        <Text style={styles.buttonText}>注册</Text>
                     </TouchableHighlight>
                     <View style = {{flex: 2}}/>
                     <TouchableHighlight
                         style={styles.button}
                         underlayColor='#99d9f4'
                         onPress={this._login.bind(this)}>
-                        <Text style={styles.buttonText}>Login</Text>
+                        <Text style={styles.buttonText}>登录</Text>
                     </TouchableHighlight>
                 </View>
                 {StatusBar.setBarStyle("default")}
             </View>
         );
+    }
+}
+
+class UserInfo extends Component {
+    render() {
+        return (
+            <TouchableOpacity style={styles.container}
+                              onPress={() => this.props.navigator.pop()}>
+                {StatusBar.setBarStyle("light-content")}
+            </TouchableOpacity>
+
+    );
     }
 }
 

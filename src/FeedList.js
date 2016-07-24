@@ -14,6 +14,7 @@ import {
     StatusBar,
     Animated,
 } from 'react-native';
+import Global from './Global';
 
 
 const ZERO = 0.000000001;
@@ -31,6 +32,8 @@ const SUZHOU = ["不限","姑苏区","虎丘区","吴中区","相城区","吴江
 const PRICE = ["不限","500以下", "500-800", "800-1000", "1000-1500", "1500-2000","2000-3000","3000-5000","5000以上"];
 const HOUSETYPE = ["不限","一室","两室","三室","四室以上"];
 const ORDER = ["不限","租金从低到高","租金从高到低"];
+
+const url = Global.url+"token";
 
 function convert(input){
     return input*width/320;
@@ -60,7 +63,6 @@ export default class home extends Component {
             {rowHasChanged: (r1, r2) => r1 !== r2});
 
 
-
         this.state = {
             entries: [],
             dataSource: dataSource,
@@ -88,6 +90,23 @@ export default class home extends Component {
 
             fadeAnim: new Animated.Value(0), // init opacity 0
         };
+        if(Global.username) {
+            fetch(url + "/" + Global.username, {
+                method: 'get',
+                headers: {
+                    'Authorization': 'Token ' + Global.token,
+                },
+            })
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    Global.saved = responseJson.saved;
+                    console.log(responseJson);
+                    // alert("User Info");
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
     }
     componentWillMount() {
         //this.refs.searchBar.focus();
@@ -151,6 +170,8 @@ export default class home extends Component {
 
         console.log("rowData");
         console.log(rowData);
+
+        Global.history.push("id1");
 
         // let UID123_object = {
         //     height: 0,

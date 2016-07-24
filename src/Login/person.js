@@ -9,16 +9,23 @@ import {
     TouchableOpacity,
     NavigatorIOS,
     StatusBar,
+    Alert,
 } from 'react-native';
+import Global from '../Global';
+
 
 import Icon_i from 'react-native-vector-icons/Ionicons';
 import Login from './login.index';
+
 // var Feedback = require('../QA/Q_A');
 // var IC_Tour = require('./IC_Tour');
 // var About_Us = require('./About_Us');
 
 //var huxley = require('./huxley');
 //var queen = require('./queen');
+
+const url = Global.url+"token";
+
 
 var { width, height } = Dimensions.get('window');
 
@@ -40,15 +47,118 @@ var { width, height } = Dimensions.get('window');
 // }
 
 export default class person extends Component {
-
-    _onPress(_child, flag) {
+    _onPressLogin(_child, flag) {
         //console.log(_child);
+        if(Global.username) {
+            // console.log(Global.token);
+            fetch(url + "/" + Global.username, {
+                method: 'get',
+                headers: {
+                    'Authorization': 'Token ' + Global.token,
+                },
+            })
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    // Global.token = responseJson.token;
+                    console.log(responseJson);
+                    alert("User Info");
+                })
+                .catch((error) => {
+                    this.props.nav.navigator.push({
+                        title: 'Login',
+                        titleTextColor: 'white',
+                        barTintColor: '#19CAB6',
+                        navigationBarHidden: flag,
+                        component: _child,
+                        //rightButtonTitle: 'Go Inside',
+                        tintColor: 'white',
+                        //rightButtonIcon: require('image!NavBarButtonPlus'),
+                        //onRightButtonPress: this.onRightButtonPress,
+                        //navigationBarHidden: true,
+                    });
+                    console.error(error);
+                });
+        } else {
+            this.props.nav.navigator.push({
+                title: 'Login',
+                titleTextColor: 'white',
+                barTintColor: '#19CAB6',
+                navigationBarHidden: flag,
+                component: _child,
+                //rightButtonTitle: 'Go Inside',
+                tintColor: 'white',
+                //rightButtonIcon: require('image!NavBarButtonPlus'),
+                //onRightButtonPress: this.onRightButtonPress,
+                //navigationBarHidden: true,
+            });
+        }
+    }
+
+    _onPress(_child, flag, _rowname) {
+        if(_rowname === "我的收藏") {
+            if(Global.username) {
+                // console.log(Global.token);
+                fetch(url + "/" + Global.username, {
+                    method: 'get',
+                    headers: {
+                        'Authorization': 'Token ' + Global.token,
+                    },
+                })
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+                        // Global.token = responseJson.token;
+                        console.log(responseJson);
+                        this.props.nav.navigator.push({
+                            title: 'Login',
+                            titleTextColor: 'white',
+                            barTintColor: '#19CAB6',
+                            navigationBarHidden: flag,
+                            component: _child,
+                            //rightButtonTitle: 'Go Inside',
+                            tintColor: 'white',
+                            //rightButtonIcon: require('image!NavBarButtonPlus'),
+                            //onRightButtonPress: this.onRightButtonPress,
+                            //navigationBarHidden: true,
+                        });
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        Alert.alert("请登录","你尚未登录,或者你的登录已过期",
+                            [
+                                {text: '取消', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                                {text: '确认', onPress: () => this.okPress()},
+                            ]);
+                    });
+            } else {
+                Alert.alert("请登录","你尚未登录,或者你的登录已过期",
+                    [
+                        {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                        {text: 'OK', onPress: () => this.okPress()},
+                    ]);
+            }
+        } else {
+            this.props.nav.navigator.push({
+                title: 'Login',
+                titleTextColor: 'white',
+                barTintColor: '#19CAB6',
+                navigationBarHidden: flag,
+                component: _child,
+                //rightButtonTitle: 'Go Inside',
+                tintColor: 'white',
+                //rightButtonIcon: require('image!NavBarButtonPlus'),
+                //onRightButtonPress: this.onRightButtonPress,
+                //navigationBarHidden: true,
+            });
+        }
+    }
+
+    okPress() {
         this.props.nav.navigator.push({
             title: 'Login',
             titleTextColor: 'white',
             barTintColor: '#19CAB6',
-            navigationBarHidden: flag,
-            component: _child,
+            navigationBarHidden: 1,
+            component: Login,
             //rightButtonTitle: 'Go Inside',
             tintColor: 'white',
             //rightButtonIcon: require('image!NavBarButtonPlus'),
@@ -56,11 +166,18 @@ export default class person extends Component {
             //navigationBarHidden: true,
         });
     }
+
+    name() {
+        if(Global.username) {
+            return Global.username;
+        }
+        return "点击登录"
+    }
     renderRow(_iconname, _rowname, _childview) {
         return (
             <TouchableOpacity
                 style={styles.row}
-                onPress={() => this._onPress(_childview, 0)}
+                onPress={() => this._onPress(_childview, 0, _rowname)}
                 underlayColor='#dddddd'
             >
                 <View style={styles.picv}>
@@ -82,7 +199,7 @@ export default class person extends Component {
                 <View style={styles.login}>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => this._onPress(Login, 1)}
+                        onPress={() => this._onPressLogin(Login, 1)}
                         underlayColor='#dddddd'
                     >
 
@@ -90,7 +207,7 @@ export default class person extends Component {
                             style={styles.img}
                             source={require('../img/blank.gif')}
                         />
-                        <Text style={styles.text1}>点击登录</Text>
+                        <Text style={styles.text1}>{this.name()}</Text>
                     </TouchableOpacity>
                 </View>
                 {this.renderRow('ios-star-outline', '我的收藏', empty)}

@@ -10,13 +10,18 @@ import {
     TouchableOpacity,
     StatusBar,
     Linking,
+    Alert
 } from 'react-native';
+import Global from './Global';
 
 import Swiper from 'react-native-swiper';
 
 var Icon = require('react-native-vector-icons/MaterialIcons');
 import Icon_i from 'react-native-vector-icons/Ionicons';
+
 var { width, height } = Dimensions.get('window');
+
+const url = Global.url+"token";
 
 const picHeight = (height-52-64)/2;
 
@@ -30,7 +35,17 @@ export default class FeedDetail extends Component {
         super(props);
         this.entry = this.props.data;
         this.state = {
+            saved: false
         };
+    }
+
+    componentDidMount() {
+        var e = Global.saved.filter(e => e === 'id1');
+        if(e[0]) {
+            this.setState({
+                saved: true
+            });
+        }
     }
 
     rengerImg() {
@@ -46,6 +61,49 @@ export default class FeedDetail extends Component {
         return rows;
     }
 
+    _icon() {
+        if (this.state.saved === true) {
+            return (
+                <Icon_i name='ios-star' size={25} color="#397CDC"/>
+            );
+        }
+        return (
+            <Icon_i name='ios-star-outline' size={25} color="#397CDC"/>
+        );
+    }
+
+    toggleSave() {
+        if(Global.username) {
+            this.setState({saved: !this.state.saved});
+            if (this.state.saved === true) {
+                Global.saved.splice(Global.saved.indexOf("id1"), 1);
+            } else {
+                Global.saved.push("id1");
+            }
+            fetch(url + '/' + Global.username, {
+                method: 'put',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Token ' + Global.token,
+                },
+                body: JSON.stringify({
+                    saved: Global.saved
+                })
+            })
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    console.log(responseJson);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+            console.log(Global.saved);
+        } else {
+            Alert.alert("请登录","你尚未登录,或者你的登录已过期");
+        }
+    }
+
     render() {
         return (
             <View style={{flex: 1}}>
@@ -57,7 +115,9 @@ export default class FeedDetail extends Component {
                         <View style={styles.head}>
                             <View style={{flexDirection: 'row'}}>
                                 <Text style={{flex: 1, paddingTop: 3, paddingBottom: 5,fontSize: 16,color: 'black',fontWeight: 'bold',paddingLeft: 15}}>{this.entry.name}</Text>
-                                <Icon_i style={{alignSelf: 'flex-end', paddingRight: 10}} name='ios-star-outline' size={25} color="#397CDC"/>
+                                <TouchableOpacity style={{alignSelf: 'flex-end', paddingRight: 10}} onPress={() => this.toggleSave()}>
+                                    {this._icon()}
+                                </TouchableOpacity>
                             </View>
                             <Text style={[styles.text1,{fontSize: 15, color: '#397CDC', paddingTop:4, paddingBottom: 1}]}>{this.entry.price_1}万元</Text>
                         </View>
@@ -70,11 +130,11 @@ export default class FeedDetail extends Component {
                                 <View style={{height: 35, width: 35, borderWidth: 2, borderRadius: 35/2, alignItems: 'center', justifyContent: 'center'}}>
                                     <Icon name="local-hotel" size={25} color="black" />
                                 </View>
-                                <Text style={[styles.text1,{paddingLeft: 5}]}>{this.entry.bed}</Text>
+                                <Text style={[styles.text1,{paddingLeft: 5}]}>{this.entry.bedroom}</Text>
                                 <View style={{height: 35, width: 35, borderWidth: 2, borderRadius: 35/2, alignItems: 'center', justifyContent: 'center'}}>
                                     <Icon name="event-seat" size={25} color="black" />
                                 </View>
-                                <Text style={[styles.text1,{paddingLeft: 5}]}>{this.entry.living}</Text>
+                                <Text style={[styles.text1,{paddingLeft: 5}]}>{this.entry.livingroom}</Text>
                                 <View style={{height: 35, width: 35, borderWidth: 2, borderRadius: 35/2, alignItems: 'center', justifyContent: 'center'}}>
                                     <Icon name="wc" size={25} color="black" />
                                 </View>

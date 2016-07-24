@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, make_response,redirect,url_for
 from flask_restful import reqparse, abort, Api, Resource
 from flask_pymongo import PyMongo
-from flask_httpauth import HTTPBasicAuth
+from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
 
@@ -15,6 +15,8 @@ app.config['SECRET_KEY'] = 'this is a property app'
 mongo = PyMongo(app)
 api = Api(app)
 auth = HTTPBasicAuth()
+authT = HTTPTokenAuth(scheme='Token')
+
 
 APP_URL = "http://127.0.0.1:5000"
 
@@ -35,6 +37,28 @@ USERS = {
     'img': 'build an API'
   },
 }
+
+@authT.verify_token
+def verify_auth_token(auth_token):
+  serial = Serializer(app.config['SECRET_KEY'])
+  try:
+    data = serial.loads(auth_token)
+  except SignatureExpired:
+    return None
+  except BadSignature:
+    return None
+  serial_user = data['username']
+  return serial_user
+
+@authT.error_handler
+def unauthorized():
+  # return 403 instead of 401 to prevent browsers from displaying the default
+  # auth dialog
+  return make_response(jsonify({'message': 'Unauthorized token access'}), 403)
+
+def abort_if_user_doesnt_exist(user_id):
+  if user_id not in USERS:
+    abort(404, message="User {} doesn't exist".format(user_id))
 
 @auth.get_password
 def get_password(username):
@@ -134,15 +158,15 @@ class HouseList(Resource):
       else:
         return {"response": "name missing"}
 
-def generate_auth_token(username, expiration=600):
+def generate_auth_token(username, expiration=604800):
   gen_serial = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
   return gen_serial.dumps({'username': username})
 
-class User(Resource):
-  decorators = [auth.login_required]
+
+class Token(Resource):
+  decorators = [authT.login_required]
   def get(self, user_id):
     data = []
-
     if user_id:
       user_info = mongo.db.users.find_one({"username": user_id}, {"_id": 0})
       if user_info:
@@ -158,7 +182,24 @@ class User(Resource):
   def put(self, user_id):
     data = request.get_json()
     mongo.db.users.update({'username': user_id}, {'$set': data})
-    return "ok", 201
+    return "ok", 201, mongo.db.users.find_one({"username": user_id}, {"_id": 0})
+
+
+class User(Resource):
+  decorators = [auth.login_required]
+  def get(self, user_id):
+    data = []
+    if user_id:
+      user_info = mongo.db.users.find_one({"username": user_id}, {"_id": 0})
+      if user_info:
+        return_token = generate_auth_token(user_id)
+        return {'token':return_token.decode()}, 200
+        # return jsonify({"status": "ok", "data": user_info})
+      else:
+        return {"response": "no user found for {}".format(user_id)}
+    return jsonify({"response": data})
+
+
 
 class UserList(Resource):
 
@@ -198,6 +239,7 @@ api.add_resource(House, '/<house_name>', endpoint="name")
 api.add_resource(Image, '/<house_name>/<filename>', endpoint="image")
 api.add_resource(UserList, '/users', endpoint="users")
 api.add_resource(User, '/users/<user_id>', endpoint="username")
+api.add_resource(Token, '/token/<user_id>', endpoint="token")
 
 @app.after_request
 def after_request(response):
