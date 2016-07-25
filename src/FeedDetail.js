@@ -40,7 +40,8 @@ export default class FeedDetail extends Component {
     }
 
     componentDidMount() {
-        var e = Global.saved.filter(e => e === 'id1');
+        console.log(Global.saved);
+        var e = Global.saved.filter(e => e === this.entry.id);
         if(e[0]) {
             this.setState({
                 saved: true
@@ -76,9 +77,9 @@ export default class FeedDetail extends Component {
         if(Global.username) {
             this.setState({saved: !this.state.saved});
             if (this.state.saved === true) {
-                Global.saved.splice(Global.saved.indexOf("id1"), 1);
+                Global.saved.splice(Global.saved.indexOf(this.entry.id), 1);
             } else {
-                Global.saved.push("id1");
+                Global.saved.push(this.entry.id);
             }
             fetch(url + '/' + Global.username, {
                 method: 'put',

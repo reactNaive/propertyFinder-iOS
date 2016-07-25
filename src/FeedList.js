@@ -62,7 +62,8 @@ export default class home extends Component {
         var dataSource = new ListView.DataSource(
             {rowHasChanged: (r1, r2) => r1 !== r2});
 
-
+        this.searchTail = "&q=*:*";
+        this.sortTail = "";
         this.state = {
             entries: [],
             dataSource: dataSource,
@@ -71,11 +72,9 @@ export default class home extends Component {
             newdataSource: [],
             solr_json:[],
 
-            solr_url:"http://54.171.189.58:8983/solr/gettingstarted/select?indent=on&q=*:*&wt=json",
-
-            solr_url_1:"http://54.171.189.58:8983/solr/gettingstarted/select?indent=on&wt=json",
-            solr_url_2_search:"&q=*:*",
-            solr_url_3_fq_sort: "",
+            url: Global.searchURL + this.searchTail,
+            // solr_url_2_search:"&q=*:*",
+            // solr_url_3_fq_sort: "",
 
 
             result: false,
@@ -90,33 +89,15 @@ export default class home extends Component {
 
             fadeAnim: new Animated.Value(0), // init opacity 0
         };
-        if(Global.username) {
-            fetch(url + "/" + Global.username, {
-                method: 'get',
-                headers: {
-                    'Authorization': 'Token ' + Global.token,
-                },
-            })
-                .then((response) => response.json())
-                .then((responseJson) => {
-                    Global.saved = responseJson.saved;
-                    console.log(responseJson);
-                    // alert("User Info");
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
-        }
+
+
     }
     componentWillMount() {
         //this.refs.searchBar.focus();
 
         //this.fetchData();
         //var solr_query = "http://54.171.189.58:8983/solr/gettingstarted/select?indent=on&q=*:*&wt=json";
-        this.fetch_solr(this.state.solr_url);
-
-
-
+        this.fetch_solr(this.state.url);
     }
     componentDidMount(){
 
@@ -170,8 +151,11 @@ export default class home extends Component {
 
         console.log("rowData");
         console.log(rowData);
-
-        Global.history.push("id1");
+        // console.log(Global.history.indexOf(rowData.id));
+        if(Global.history.indexOf(rowData.id) === -1) {
+            Global.history.push(rowData.id);
+            console.log(Global.history);
+        }
 
         // let UID123_object = {
         //     height: 0,
@@ -197,33 +181,20 @@ export default class home extends Component {
 
     _search() {
         if (this.state.searchContent === '') {
-            this.setState({
-                solr_url_2_search:"&q=*:*"
-            });
-            // return AlertIOS.alert(
-            //     '内容不能为空'
-            // );
-            //this.state.searchContent
-
+            this.searchTail = "&q=*:*";
         }
-        else{
-            this.state.solr_url_2_search="&q="+this.state.searchContent;
-            this.setState({
-                solr_url_2_search:this.state.solr_url_2_search
-            });
+        else {
+            this.searchTail="&q=" + this.state.searchContent;
         }
-
-        this.state.solr_url=this.state.solr_url_1+this.state.solr_url_2_search+this.state.solr_url_3_fq_sort;
-        this.setState({
-            solr_url:this.state.solr_url
-        });
-        this.fetch_solr(this.state.solr_url);
-
-        console.log("solr_url");
-        console.log(this.state.solr_url);
-        console.log("dataSource123");
-        console.log(this.state.dataSource);
-
+        this.setState({url: Global.searchURL + this.searchTail + this.sortTail},
+            () => {
+                this.fetch_solr(this.state.url);
+                console.log("solr_url");
+                console.log(this.state.url);
+                console.log("dataSource123");
+                console.log(this.state.dataSource);
+            }
+        );
 
         this.refs.searchBar.blur();
         var that = this;
@@ -600,20 +571,30 @@ export default class home extends Component {
 
 
         // newDs.map((newDs)=>newDs.price=newDs.price+1);
-        this.state.solr_url_3_fq_sort=solr_url_3_fq_sort;
-        this.setState({
-            solr_url_3_fq_sort:solr_url_3_fq_sort
-        });
+        // this.state.solr_url_3_fq_sort=solr_url_3_fq_sort;
+        // this.setState({
+        //     solr_url_3_fq_sort:solr_url_3_fq_sort
+        // });
+        //
+        // this.state.solr_url=this.state.solr_url_1+this.state.solr_url_2_search+this.state.solr_url_3_fq_sort;
+        // console.log("this.state.solr_url_filter");
+        // console.log(this.state.solr_url);
+        //
+        // this.setState({
+        //     solr_url:this.state.solr_url
+        // });
+        // this.fetch_solr(this.state.solr_url);
 
-        this.state.solr_url=this.state.solr_url_1+this.state.solr_url_2_search+this.state.solr_url_3_fq_sort;
-        console.log("this.state.solr_url_filter");
-        console.log(this.state.solr_url);
-
-        this.setState({
-            solr_url:this.state.solr_url
-        });
-        this.fetch_solr(this.state.solr_url);
-
+        this.sortTail = solr_url_3_fq_sort;
+        this.setState({url: Global.searchURL + this.searchTail + this.sortTail},
+            () => {
+                this.fetch_solr(this.state.url);
+                console.log("solr_url");
+                console.log(this.state.url);
+                console.log("dataSource123");
+                console.log(this.state.dataSource);
+            }
+        );
 
         // console.log("data");
         // console.log(newDs);

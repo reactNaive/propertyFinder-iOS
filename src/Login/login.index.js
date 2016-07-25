@@ -13,6 +13,8 @@ import {
     Alert,
     StatusBar,
 } from 'react-native';
+import UserInfo from './UserInfo';
+
 import Global from '../Global';
 
 import base64 from 'base-64';
@@ -33,6 +35,7 @@ export default class loginPage extends Component {
             password: '',
             uid: '',
         };
+
     }
 
     //create user
@@ -84,18 +87,24 @@ export default class loginPage extends Component {
             .then((response) => response.json())
             .then((responseJson) => {
                 console.log(responseJson);
+                // console.log(this.props);
                 Global.token = responseJson.token;
                 Global.username = this.state.username;
+
+                Global.saved = responseJson.data.saved;
+                console.log(Global.saved);
                 this.props.navigator.push({
-                    title: '信息',
+                    title: this.state.username,
                     titleTextColor: 'white',
                     barTintColor: '#19CAB6',
                     navigationBarHidden: false,
                     component: UserInfo,
-                    //rightButtonTitle: 'Go Inside',
+                    leftButtonTitle: 'Back',
                     tintColor: 'white',
-                    //rightButtonIcon: require('image!NavBarButtonPlus'),
-                    onRightButtonPress: () => this.navigator.popN(3) ,
+                    passProps: {name: this.state.username},
+                    onLeftButtonPress: () => this.props.navigator.popN(2),
+                    // rightButtonIcon: require('image!NavBarButtonPlus'),
+                    //onRightButtonPress: this.props.navigator.popN(1),
                     //navigationBarHidden: true,
                 });
             })
@@ -173,20 +182,13 @@ export default class loginPage extends Component {
     }
 }
 
-class UserInfo extends Component {
-    render() {
-        return (
-            <TouchableOpacity style={styles.container}
-                              onPress={() => this.props.navigator.pop()}>
-                {StatusBar.setBarStyle("light-content")}
-            </TouchableOpacity>
-
-    );
-    }
-}
 
 const styles = StyleSheet.create({
 
+    container:{
+        marginTop: 64,
+        flex: 1
+    },
     arrow: {
         width: 25,
         height: 30,

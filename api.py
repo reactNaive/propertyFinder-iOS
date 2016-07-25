@@ -193,7 +193,7 @@ class User(Resource):
       user_info = mongo.db.users.find_one({"username": user_id}, {"_id": 0})
       if user_info:
         return_token = generate_auth_token(user_id)
-        return {'token':return_token.decode()}, 200
+        return {'token':return_token.decode(), "data": user_info}, 200
         # return jsonify({"status": "ok", "data": user_info})
       else:
         return {"response": "no user found for {}".format(user_id)}

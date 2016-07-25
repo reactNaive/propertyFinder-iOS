@@ -16,6 +16,10 @@ import Global from '../Global';
 
 import Icon_i from 'react-native-vector-icons/Ionicons';
 import Login from './login.index';
+import History from './history';
+import UserInfo from './UserInfo'
+import Saved from './saved';
+
 
 // var Feedback = require('../QA/Q_A');
 // var IC_Tour = require('./IC_Tour');
@@ -61,7 +65,19 @@ export default class person extends Component {
                 .then((responseJson) => {
                     // Global.token = responseJson.token;
                     console.log(responseJson);
-                    alert("User Info");
+                    this.props.nav.navigator.push({
+                        title: Global.username,
+                        titleTextColor: 'white',
+                        barTintColor: '#19CAB6',
+                        navigationBarHidden: flag,
+                        component: UserInfo,
+                        passProps: {name: Global.username},
+                        //rightButtonTitle: 'Go Inside',
+                        tintColor: 'white',
+                        //rightButtonIcon: require('image!NavBarButtonPlus'),
+                        //onRightButtonPress: this.onRightButtonPress,
+                        //navigationBarHidden: true,
+                    });
                 })
                 .catch((error) => {
                     this.props.nav.navigator.push({
@@ -109,13 +125,14 @@ export default class person extends Component {
                         // Global.token = responseJson.token;
                         console.log(responseJson);
                         this.props.nav.navigator.push({
-                            title: 'Login',
+                            title: _rowname,
                             titleTextColor: 'white',
                             barTintColor: '#19CAB6',
                             navigationBarHidden: flag,
                             component: _child,
                             //rightButtonTitle: 'Go Inside',
                             tintColor: 'white',
+                            passProps: {tab: "saved"}
                             //rightButtonIcon: require('image!NavBarButtonPlus'),
                             //onRightButtonPress: this.onRightButtonPress,
                             //navigationBarHidden: true,
@@ -132,19 +149,20 @@ export default class person extends Component {
             } else {
                 Alert.alert("请登录","你尚未登录,或者你的登录已过期",
                     [
-                        {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                        {text: 'OK', onPress: () => this.okPress()},
+                        {text: '取消', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                        {text: '确认', onPress: () => this.okPress()},
                     ]);
             }
         } else {
             this.props.nav.navigator.push({
-                title: 'Login',
+                title: _rowname,
                 titleTextColor: 'white',
                 barTintColor: '#19CAB6',
                 navigationBarHidden: flag,
                 component: _child,
                 //rightButtonTitle: 'Go Inside',
                 tintColor: 'white',
+                passProps: {tab: "history"}
                 //rightButtonIcon: require('image!NavBarButtonPlus'),
                 //onRightButtonPress: this.onRightButtonPress,
                 //navigationBarHidden: true,
@@ -210,8 +228,8 @@ export default class person extends Component {
                         <Text style={styles.text1}>{this.name()}</Text>
                     </TouchableOpacity>
                 </View>
-                {this.renderRow('ios-star-outline', '我的收藏', empty)}
-                {this.renderRow('ios-time-outline', '历史记录', empty)}
+                {this.renderRow('ios-star-outline', '我的收藏', History)}
+                {this.renderRow('ios-time-outline', '历史记录', History)}
 
                 {StatusBar.setBarStyle("light-content")}
             </View>
