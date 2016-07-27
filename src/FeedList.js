@@ -86,7 +86,7 @@ export default class home extends Component {
             tabColors2: [[],[],[],[]],
 
             condition: ['不限','不限','不限','不限',],
-
+            keyboard: false,
             fadeAnim: new Animated.Value(0), // init opacity 0
         };
 
@@ -99,9 +99,9 @@ export default class home extends Component {
         //var solr_query = "http://54.171.189.58:8983/solr/gettingstarted/select?indent=on&q=*:*&wt=json";
         this.fetch_solr(this.state.url);
     }
-    componentDidMount(){
-
-    }
+    // componentDidMount(){
+    //
+    // }
     fetch_solr(solr_query){
 
         fetch(solr_query)
@@ -180,10 +180,10 @@ export default class home extends Component {
     }
 
     _search() {
-        if (this.state.searchContent === '') {
+        this.setState({keyboard: false});
+        if (!this.state.searchContent) {
             this.searchTail = "&q=*:*";
-        }
-        else {
+        } else {
             this.searchTail="&q=" + this.state.searchContent;
         }
         this.setState({url: Global.searchURL + this.searchTail + this.sortTail},
@@ -270,7 +270,18 @@ export default class home extends Component {
 
 
     }
-
+    img(rowData) {
+        if(rowData.fig_urls === undefined) {
+            return (
+                <Image style={styles.thumb} source={{ uri: '' }} />
+            );
+        } else {
+            console.log(rowData.fig_urls);
+            return (
+                <Image style={styles.thumb} source={{ uri: rowData.fig_urls[0] }} />
+            );
+        }
+    }
     renderRow(rowData, sectionID, rowID) {
 
 
@@ -280,15 +291,15 @@ export default class home extends Component {
         // if(rowID == 0) {
         //     top = -20;
         // }
+        // console.log(rowData.fig_urls === undefined);
         return (
             <TouchableHighlight onPress={() => this.rowPressed(rowData)}
                                 underlayColor='#dddddd'
                                 key={Math.random()}
-
             >
                 <View>
                     <View style={styles.rowContainer}>
-                        <Image style={styles.thumb} source={{ uri: "http://gatehouse-elite.com/wp-content/gallery/sundance-ridge-luxury-real-estate-for-sale-on-st-kitts-the-suncatcher-villa/new-luxury-real-estate-for-sale-on-sundance-ridge-saint-kitts-ocean-views-carribean-property.jpg" }} />
+                        {this.img(rowData)}
                         <View  style={styles.textContainer}>
                             <View style={styles.rowContainer2}>
                                 <Text style={styles.title}
@@ -615,6 +626,35 @@ export default class home extends Component {
     //     });
     // }
 
+    gery() {
+        if(this.state.keyboard) {
+            console.log("jinlai");
+            return (
+                <View style={styles.grey} >
+                    <TouchableOpacity style={styles.grey} onPress={() => this.pressGrey()}/>
+                </View>
+            );
+        } else {
+            return;
+        }
+    }
+
+    pressGrey() {
+        this.setState({
+            keyboard: false,
+        });
+        this._search();
+        this.refs.searchBar.unFocus();
+    }
+
+    focus() {
+
+        // this.state.keyboard=true;
+        this.setState({
+            keyboard: true,
+        }, () => console.log("keyboard",this.state.keyboard));
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -628,6 +668,7 @@ export default class home extends Component {
                             onChange={(event) => this.setState({searchContent: event.nativeEvent.text})}
                             onSearchButtonPress={() => this._search()}
                             barTintColor='#19CAB6'
+                            onFocus={() => this.focus()}
                         />
                     </View>
                     <TouchableOpacity style={styles.cube} onPress={() => this.filter()}>
@@ -649,12 +690,13 @@ export default class home extends Component {
                     </Animated.View>
 
 
-
                     <ListView style={{flex: 1}}
                               dataSource={this.state.dataSource}
                               renderRow={this.renderRow.bind(this)}
                     >
                     </ListView>
+                    {this.gery()}
+
                 </View>
                 {StatusBar.setBarStyle("light-content")}
             </View>
@@ -714,6 +756,17 @@ var styles = StyleSheet.create({
         flex: 1,
     },
 
+    grey: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: width,
+        height: height-64,
+        backgroundColor: "black",
+        opacity: 0.4,
+        // blur: true,
+
+    },
 
     search: {
         //marginTop: 20,

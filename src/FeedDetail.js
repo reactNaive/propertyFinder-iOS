@@ -50,12 +50,19 @@ export default class FeedDetail extends Component {
     }
 
     rengerImg() {
+        if(this.entry.fig_urls === undefined) {
+            return (
+                <View style={styles.slide1} key={j}>
+
+                </View>
+            );
+        }
         var rows = [];
-        for (var j=0; j < 3; j++) {
+        for (var j=0; j < this.entry.fig_urls.length; j++) {
             rows.push(<View style={styles.slide1} key={j}>
                 <Image
                     style={styles.img}
-                    source={{ uri: "http://gatehouse-elite.com/wp-content/gallery/sundance-ridge-luxury-real-estate-for-sale-on-st-kitts-the-suncatcher-villa/new-luxury-real-estate-for-sale-on-sundance-ridge-saint-kitts-ocean-views-carribean-property.jpg" }}
+                    source={{ uri: this.entry.fig_urls[j]}}
                 />
             </View>);
         }

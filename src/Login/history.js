@@ -247,10 +247,19 @@ export default class home extends Component {
     //     });
     // }
 
+    tabname() {
+        if(this.props.tab === "history") {
+            return "历史记录";
+        } else {
+            return "收藏记录";
+        }
+    }
+
     render() {
         if(this.state.empty) {
             return (
-                <View style={styles.container}>
+                <View style={styles.containerE}>
+                    <Text>没有{this.tabname()}</Text>
                     {StatusBar.setBarStyle("light-content")}
                 </View>
             );
@@ -319,10 +328,16 @@ var styles = StyleSheet.create({
 
 
     },
+    containerE: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
     container: {
         flex: 1,
+        // alignItems: 'center',
+        // justifyContent: 'center'
     },
-
 
     search: {
         //marginTop: 20,

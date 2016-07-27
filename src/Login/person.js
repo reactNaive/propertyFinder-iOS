@@ -18,7 +18,7 @@ import Icon_i from 'react-native-vector-icons/Ionicons';
 import Login from './login.index';
 import History from './history';
 import UserInfo from './UserInfo'
-import Saved from './saved';
+// import Saved from './saved';
 
 
 // var Feedback = require('../QA/Q_A');
@@ -69,9 +69,9 @@ export default class person extends Component {
                         title: Global.username,
                         titleTextColor: 'white',
                         barTintColor: '#19CAB6',
-                        navigationBarHidden: flag,
-                        component: UserInfo,
-                        passProps: {name: Global.username},
+                        // navigationBarHidden: flag,
+                        component: History,
+                        passProps: {tab: "saved"},
                         //rightButtonTitle: 'Go Inside',
                         tintColor: 'white',
                         //rightButtonIcon: require('image!NavBarButtonPlus'),
@@ -110,6 +110,10 @@ export default class person extends Component {
         }
     }
 
+    onRightButtonPress() {
+        Global.history =[];
+    }
+
     _onPress(_child, flag, _rowname) {
         if(_rowname === "我的收藏") {
             if(Global.username) {
@@ -132,9 +136,9 @@ export default class person extends Component {
                             component: _child,
                             //rightButtonTitle: 'Go Inside',
                             tintColor: 'white',
-                            passProps: {tab: "saved"}
-                            //rightButtonIcon: require('image!NavBarButtonPlus'),
-                            //onRightButtonPress: this.onRightButtonPress,
+                            passProps: {tab: "saved"},
+                            // rightButtonIcon: require('image!NavBarButtonPlus'),
+                            // onRightButtonPress: this.onRightButtonPress,
                             //navigationBarHidden: true,
                         });
                     })
@@ -160,11 +164,11 @@ export default class person extends Component {
                 barTintColor: '#19CAB6',
                 navigationBarHidden: flag,
                 component: _child,
-                //rightButtonTitle: 'Go Inside',
+                rightButtonTitle: '清空',
                 tintColor: 'white',
-                passProps: {tab: "history"}
+                passProps: {tab: "history"},
                 //rightButtonIcon: require('image!NavBarButtonPlus'),
-                //onRightButtonPress: this.onRightButtonPress,
+                onRightButtonPress: this.onRightButtonPress,
                 //navigationBarHidden: true,
             });
         }
