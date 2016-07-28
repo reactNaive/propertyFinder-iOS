@@ -115,6 +115,8 @@ export default class person extends Component {
 
     onRightButtonPress() {
         Global.history =[];
+        Alert.alert("历史记录已清空");
+        this.props.nav.navigator.pop();
     }
 
     onRightButtonPressSaved() {
@@ -133,8 +135,13 @@ export default class person extends Component {
             .then((response) => response.json())
             .then((responseJson) => {
                 console.log(responseJson);
+                if(responseJson == 'ok') {
+                    Alert.alert("收藏已清空");
+                    this.props.nav.navigator.pop();
+                }
             })
             .catch((error) => {
+                Alert.alert("清空失败");
                 console.error(error);
             });
     }
@@ -163,7 +170,7 @@ export default class person extends Component {
                             //rightButtonTitle: 'Go Inside',
                             tintColor: 'white',
                             passProps: {tab: "saved"},
-                            onRightButtonPress: this.onRightButtonPressSaved,
+                            onRightButtonPress: () => this.onRightButtonPressSaved(),
 
                             // rightButtonIcon: require('image!NavBarButtonPlus'),
                             // onRightButtonPress: this.onRightButtonPress,
@@ -196,7 +203,7 @@ export default class person extends Component {
                 tintColor: 'white',
                 passProps: {tab: "history"},
                 //rightButtonIcon: require('image!NavBarButtonPlus'),
-                onRightButtonPress: this.onRightButtonPress,
+                onRightButtonPress: () => this.onRightButtonPress(),
                 //navigationBarHidden: true,
             });
         }
