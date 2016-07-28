@@ -42,10 +42,10 @@ export default class loginPage extends Component {
     //create user
     _register() {
         this.props.navigator.push({
-            title: this.state.username,
+            title: "注册",
             titleTextColor: 'white',
             barTintColor: '#19CAB6',
-            navigationBarHidden: false,
+            navigationBarHidden: true,
             component: registerPage,
             // leftButtonTitle: 'Back',
             tintColor: 'white',
@@ -115,15 +115,10 @@ export default class loginPage extends Component {
         return (
 
             <View style={styles.ViewContainer}>
-                <TouchableOpacity style={styles.arrow}
-                                  onPress={()=>this.props.navigator.pop()}>
-                    <Icon name='md-arrow-back'
-                          size={25}
-                          color="#19CAB6"/>
-                </TouchableOpacity>
+
                 <Image
                     style={styles.img}
-                    source={require('../img/react.png')}
+                    source={require('../img/zu.png')}
                 />
 
                 <View style={styles.separator2}/>
@@ -165,6 +160,12 @@ export default class loginPage extends Component {
                         <Text style={styles.buttonText2}>注册</Text>
                     </TouchableHighlight>
                 </View>
+                <TouchableOpacity style={styles.arrow}
+                                  onPress={()=>this.props.navigator.pop()}>
+                    <Icon name='md-arrow-back'
+                          size={25}
+                          color="#19CAB6"/>
+                </TouchableOpacity>
                 {StatusBar.setBarStyle("default")}
             </View>
         );
@@ -290,7 +291,7 @@ class registerPage extends Component {
 
                 <View style={{ borderBottomColor: '#19CAB6', borderBottomWidth: 1, alignSelf: 'stretch' }}>
                     <TextInput
-                        style={styles.box}
+                        style={styles.boxRegister}
                         value={this.state.username}
                         placeholder=' 输入用户名'
                         keyboardType= 'default'
@@ -301,7 +302,7 @@ class registerPage extends Component {
 
                 <View style={{ borderBottomColor: '#19CAB6', borderBottomWidth: 1, alignSelf: 'stretch' }}>
                     <TextInput
-                        style={styles.box}
+                        style={styles.boxRegister}
                         value={this.state.password}
                         secureTextEntry={true}
                         placeholder=' 输入密码'
@@ -312,7 +313,7 @@ class registerPage extends Component {
 
                 <View style={{ borderBottomColor: '#19CAB6', borderBottomWidth: 1, alignSelf: 'stretch' }}>
                     <TextInput
-                        style={styles.box}
+                        style={styles.boxRegister}
                         value={this.state.rePass}
                         secureTextEntry={true}
 
@@ -324,7 +325,7 @@ class registerPage extends Component {
 
                 <View style={{ borderBottomColor: '#19CAB6', borderBottomWidth: 1, alignSelf: 'stretch' }}>
                     <TextInput
-                        style={styles.box}
+                        style={styles.boxRegister}
                         value={this.state.phoneNum}
                         placeholder=' 输入手机号'
                         onChangeText={e => this.onPhoneChanged(e)}/>
@@ -334,7 +335,7 @@ class registerPage extends Component {
 
                 <View style={{ borderBottomColor: '#19CAB6', borderBottomWidth: 1, alignSelf: 'stretch' }}>
                     <TextInput
-                        style={styles.box}
+                        style={styles.boxRegister}
                         value={this.state.mail}
                         placeholder=' 输入邮箱'
                         onChangeText={e => this.onMailChanged(e)}/>
@@ -350,7 +351,12 @@ class registerPage extends Component {
                         <Text style={styles.buttonText}>注册</Text>
                     </TouchableHighlight>
                 </View>
-
+                <TouchableOpacity style={styles.arrow}
+                                  onPress={()=>this.props.navigator.pop()}>
+                    <Icon name='md-arrow-back'
+                          size={25}
+                          color="#19CAB6"/>
+                </TouchableOpacity>
                 {StatusBar.setBarStyle("light-content")}
             </View>
         );
@@ -375,9 +381,10 @@ const styles = StyleSheet.create({
     },
 
     img: {
-        width: 50,
-        height: 50,
-        borderRadius: 20,
+        width: height/9,
+        height: height/9,
+        marginBottom: height/18,
+        // borderRadius: height/18,
         // borderWidth: 1,
         // borderColor: 'red',
     },
@@ -404,6 +411,12 @@ const styles = StyleSheet.create({
     box: {
         height: 36,
         fontSize: 18,
+        // borderWidth: 1,
+        // borderColor: '#19CAB6',
+    },
+    boxRegister: {
+        height: 30,
+        fontSize: 15,
         // borderWidth: 1,
         // borderColor: '#19CAB6',
     },

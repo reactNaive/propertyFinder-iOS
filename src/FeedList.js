@@ -85,7 +85,7 @@ export default class home extends Component {
             tabColors: ['white','#EAEAEA','#EAEAEA','#EAEAEA'],
             tabColors2: [[],[],[],[]],
 
-            condition: ['不限','不限','不限','不限',],
+            condition: ['不限','不限','不限','不限'],
             keyboard: false,
             fadeAnim: new Animated.Value(0), // init opacity 0
         };
@@ -260,12 +260,18 @@ export default class home extends Component {
                 this.state.fadeAnim,    // The value to drive
                 {toValue: 1}            // Configuration
             ).start();                // Don't forget start!
+            this.setState({
+                keyboard: true,
+            });
         } else {
             this.setState({flex: ZERO});
             Animated.timing(          // Uses easing functions
                 this.state.fadeAnim,    // The value to drive
                 {toValue: 0}            // Configuration
             ).start();                // Don't forget start!
+            this.setState({
+                keyboard: false,
+            });
         }
 
 
@@ -273,7 +279,7 @@ export default class home extends Component {
     img(rowData) {
         if(rowData.fig_urls === undefined) {
             return (
-                <Image style={styles.thumb} source={{ uri: '' }} />
+                <Image style={styles.thumb} source={require('./img/detailpic_no.png')} />
             );
         } else {
             console.log(rowData.fig_urls);
@@ -303,11 +309,16 @@ export default class home extends Component {
                         <View  style={styles.textContainer}>
                             <View style={styles.rowContainer2}>
                                 <Text style={styles.title}
-                                      numberOfLines={2}>{rowData.name}</Text>
-                                <Text style={styles.price} numberOfLines={1}>{rowData.price_1}</Text>
+                                      numberOfLines={1}>{rowData.name}</Text>
+                                {/*<Text style={styles.price} numberOfLines={1}>{rowData.price_1}元</Text>*/}
                             </View>
-                            <Text style={styles.type} numberOfLines={1}>{rowData.type} {rowData.area}平米</Text>
                             <Text style={styles.adv} numberOfLines={1}>{rowData.adv}</Text>
+
+                            <View style={styles.rowContainer2}>
+                                <Text style={styles.type} numberOfLines={1}>{rowData.type} {rowData.area}平米</Text>
+                                <Text style={styles.price} numberOfLines={1}>{rowData.price_1}元/月</Text>
+                            </View>
+
                         </View>
                     </View>
                     <View style={styles.separator}/>
@@ -325,9 +336,14 @@ export default class home extends Component {
                 onPress={() => this.selection(tabName)}
                 underlayColor='white'
             >
-                <Text style={styles.tabText}>{tabName}</Text>
+                <Text style={styles.tabText}>{this.tabDisplay(tabName)}</Text>
             </TouchableHighlight>
         );
+    }
+
+    tabDisplay(tabName) {
+        var name = this.state.condition[this.getNum(tabName)];
+        return name != "不限" ? name : tabName;
     }
 
     getNum(tabName) {
@@ -628,6 +644,13 @@ export default class home extends Component {
 
     gery() {
         if(this.state.keyboard) {
+            if(this.state.flex === 0.6) {
+                return (
+                    <View style={styles.greyBottom} >
+                        <TouchableOpacity style={styles.grey} onPress={() => this.pressGrey()}/>
+                    </View>
+                );
+            }
             console.log("jinlai");
             return (
                 <View style={styles.grey} >
@@ -645,6 +668,14 @@ export default class home extends Component {
         });
         this._search();
         this.refs.searchBar.unFocus();
+        this.setState({flex: ZERO});
+        Animated.timing(          // Uses easing functions
+            this.state.fadeAnim,    // The value to drive
+            {toValue: 0}            // Configuration
+        ).start();                // Don't forget start!
+        this.setState({
+            keyboard: false,
+        });
     }
 
     focus() {
@@ -671,9 +702,11 @@ export default class home extends Component {
                             onFocus={() => this.focus()}
                         />
                     </View>
-                    <TouchableOpacity style={styles.cube} onPress={() => this.filter()}>
-                        <Icon name='tune' size={25} color='white'/>
-                    </TouchableOpacity>
+                    <View style={styles.cube} >
+                        <TouchableOpacity style={styles.cubeIcon} onPress={() => this.filter()}>
+                            <Icon name='tune' size={25} color='white'/>
+                        </TouchableOpacity>
+                    </View>
                 </View>
                 <View style={{flex: 1}}>
                     <ScrollView style={{flex: ZERO}} />
@@ -693,6 +726,7 @@ export default class home extends Component {
                     <ListView style={{flex: 1}}
                               dataSource={this.state.dataSource}
                               renderRow={this.renderRow.bind(this)}
+                              enableEmptySections={true}
                     >
                     </ListView>
                     {this.gery()}
@@ -719,28 +753,36 @@ var styles = StyleSheet.create({
         height: 1,
         backgroundColor: '#dddddd'
     },
-    price: {
-        flex:1,
-        fontSize: 15,
-        fontWeight: 'bold',
-        //color: '#48BBEC'
-        color: 'black',
-        //right:-100,
-        //marginRight: 0,
-        fontStyle: 'italic',
-        textAlign: 'right',
-    },
+
     type: {
+        fontSize: 11,
+        color: 'grey',
         lineHeight: 20
     },
     adv: {
+        fontSize: 11,
+        color: 'grey',
+        // borderWidth:1,
         lineHeight: 20
     },
     title: {
-        fontSize: 18,
+        flex: 2,
+        fontSize: 15,
         fontWeight: 'bold',
         //textAlign: 'right',
 
+    },
+    price: {
+        flex:1,
+        fontSize: 12,
+        fontWeight: 'bold',
+        // color: '#ED5F00',
+        color: '#397CDC',
+        //right:-100,
+        // borderWidth: 1,
+        //marginRight: 0,
+        // fontStyle: 'italic',
+        textAlign: 'right',
     },
     rowContainer: {
         flexDirection: 'row',
@@ -765,7 +807,16 @@ var styles = StyleSheet.create({
         backgroundColor: "black",
         opacity: 0.4,
         // blur: true,
-
+    },
+    greyBottom: {
+        position: 'absolute',
+        top: (height-64-54)/1.6*0.6,
+        left: 0,
+        width: width,
+        height: height-64,
+        backgroundColor: "black",
+        opacity: 0.4,
+        // blur: true,
     },
 
     search: {
@@ -785,7 +836,17 @@ var styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         //borderColor:"blue",
-        //borderWidth: 1,
+        borderBottomWidth: 0.1,
+    },
+    cubeIcon: {
+        flex: 1,
+        //marginTop: 20,
+        // backgroundColor: '#19CAB6',
+        alignItems: 'center',
+        justifyContent: 'center',
+        // borderRadius:
+        //borderColor:"blue",
+        // borderBottomWidth: 0.1,
     },
     filter: {
         flexDirection: 'row',shadowColor: 'black',

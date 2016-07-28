@@ -192,7 +192,18 @@ export default class home extends Component {
         // }
 
     }
-
+    img(rowData) {
+        if(rowData.fig_urls === undefined) {
+            return (
+                <Image style={styles.thumb} source={require('../img/detailpic_no.png')} />
+            );
+        } else {
+            console.log(rowData.fig_urls);
+            return (
+                <Image style={styles.thumb} source={{ uri: rowData.fig_urls[0] }} />
+            );
+        }
+    }
     renderRow(rowData, sectionID, rowID) {
 
 
@@ -206,19 +217,23 @@ export default class home extends Component {
             <TouchableHighlight onPress={() => this.rowPressed(rowData)}
                                 underlayColor='#dddddd'
                                 key={Math.random()}
-
             >
                 <View>
                     <View style={styles.rowContainer}>
-                        <Image style={styles.thumb} source={{ uri: "http://gatehouse-elite.com/wp-content/gallery/sundance-ridge-luxury-real-estate-for-sale-on-st-kitts-the-suncatcher-villa/new-luxury-real-estate-for-sale-on-sundance-ridge-saint-kitts-ocean-views-carribean-property.jpg" }} />
+                        {this.img(rowData)}
                         <View  style={styles.textContainer}>
                             <View style={styles.rowContainer2}>
                                 <Text style={styles.title}
-                                      numberOfLines={2}>{rowData.name}</Text>
-                                <Text style={styles.price} numberOfLines={1}>{rowData.price_1}</Text>
+                                      numberOfLines={1}>{rowData.name}</Text>
+                                {/*<Text style={styles.price} numberOfLines={1}>{rowData.price_1}元</Text>*/}
                             </View>
-                            <Text style={styles.type} numberOfLines={1}>{rowData.type} {rowData.area}平米</Text>
                             <Text style={styles.adv} numberOfLines={1}>{rowData.adv}</Text>
+
+                            <View style={styles.rowContainer2}>
+                                <Text style={styles.type} numberOfLines={1}>{rowData.type} {rowData.area}平米</Text>
+                                <Text style={styles.price} numberOfLines={1}>{rowData.price_1}元/月</Text>
+                            </View>
+
                         </View>
                     </View>
                     <View style={styles.separator}/>
@@ -295,28 +310,36 @@ var styles = StyleSheet.create({
         height: 1,
         backgroundColor: '#dddddd'
     },
-    price: {
-        flex:1,
-        fontSize: 15,
-        fontWeight: 'bold',
-        //color: '#48BBEC'
-        color: 'black',
-        //right:-100,
-        //marginRight: 0,
-        fontStyle: 'italic',
-        textAlign: 'right',
-    },
+
     type: {
+        fontSize: 11,
+        color: 'grey',
         lineHeight: 20
     },
     adv: {
+        fontSize: 11,
+        color: 'grey',
+        // borderWidth:1,
         lineHeight: 20
     },
     title: {
-        fontSize: 18,
+        flex: 2,
+        fontSize: 15,
         fontWeight: 'bold',
         //textAlign: 'right',
 
+    },
+    price: {
+        flex:1,
+        fontSize: 12,
+        fontWeight: 'bold',
+        // color: '#ED5F00',
+        color: '#397CDC',
+        //right:-100,
+        // borderWidth: 1,
+        //marginRight: 0,
+        // fontStyle: 'italic',
+        textAlign: 'right',
     },
     rowContainer: {
         flexDirection: 'row',
@@ -328,15 +351,29 @@ var styles = StyleSheet.create({
 
 
     },
-    containerE: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
     container: {
         flex: 1,
-        // alignItems: 'center',
-        // justifyContent: 'center'
+    },
+
+    grey: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: width,
+        height: height-64,
+        backgroundColor: "black",
+        opacity: 0.4,
+        // blur: true,
+    },
+    greyBottom: {
+        position: 'absolute',
+        top: (height-64-54)/1.6*0.6,
+        left: 0,
+        width: width,
+        height: height-64,
+        backgroundColor: "black",
+        opacity: 0.4,
+        // blur: true,
     },
 
     search: {
@@ -356,7 +393,17 @@ var styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         //borderColor:"blue",
-        //borderWidth: 1,
+        borderBottomWidth: 0.1,
+    },
+    cubeIcon: {
+        flex: 1,
+        //marginTop: 20,
+        // backgroundColor: '#19CAB6',
+        alignItems: 'center',
+        justifyContent: 'center',
+        // borderRadius:
+        //borderColor:"blue",
+        // borderBottomWidth: 0.1,
     },
     filter: {
         flexDirection: 'row',shadowColor: 'black',

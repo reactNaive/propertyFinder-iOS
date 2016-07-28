@@ -69,6 +69,14 @@ export default class FeedDetail extends Component {
         return rows;
     }
 
+    text() {
+        if(this.entry.description === undefined) {
+            return (
+                "无"
+            );
+        }
+        return this.entry.description;
+    }
     _icon() {
         if (this.state.saved === true) {
             return (
@@ -127,7 +135,7 @@ export default class FeedDetail extends Component {
                                     {this._icon()}
                                 </TouchableOpacity>
                             </View>
-                            <Text style={[styles.text1,{fontSize: 15, color: '#397CDC', paddingTop:4, paddingBottom: 1}]}>{this.entry.price_1}万元</Text>
+                            <Text style={[styles.text1,{fontSize: 15, color: '#397CDC', paddingTop:4, paddingBottom: 1}]}>{this.entry.price_1}元/月</Text>
                         </View>
 
                         <View style={styles.body1}>
@@ -151,7 +159,9 @@ export default class FeedDetail extends Component {
                         </View>
                         <View style={styles.body1}>
                             <Text style={[styles.text1,{color: '#397CDC', paddingTop:4, paddingBottom: 1}]}>房源概况</Text>
-                            <Text style={[styles.text1,{paddingBottom: 5}]}>项目位于迎春南路（中山北路）与兴中路的交汇处。北靠兴吴路，南临兴中路，东临吴江主干道中山北路，西面紧邻在建的轻轨4号线清树湾站，项目紧挨吴中区邵昂路生活圈。</Text>
+                            <Text style={[styles.text1,{paddingBottom: 5}]}>{this.text()}</Text>
+
+                            {/*<Text style={[styles.text1,{paddingBottom: 5}]}>项目位于迎春南路（中山北路）与兴中路的交汇处。北靠兴吴路，南临兴中路，东临吴江主干道中山北路，西面紧邻在建的轻轨4号线清树湾站，项目紧挨吴中区邵昂路生活圈。</Text>*/}
                         </View>
                     </ScrollView>
                 </View>

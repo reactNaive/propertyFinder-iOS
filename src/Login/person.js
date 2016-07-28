@@ -10,11 +10,14 @@ import {
     NavigatorIOS,
     StatusBar,
     Alert,
+    ScrollView
 } from 'react-native';
 import Global from '../Global';
 
 
 import Icon_i from 'react-native-vector-icons/Ionicons';
+import Icon_e from 'react-native-vector-icons/Entypo';
+
 import Login from './login.index';
 import History from './history';
 import UserInfo from './UserInfo'
@@ -66,7 +69,7 @@ export default class person extends Component {
                     // Global.token = responseJson.token;
                     console.log(responseJson);
                     this.props.nav.navigator.push({
-                        title: Global.username,
+                        title: "我的收藏",
                         titleTextColor: 'white',
                         barTintColor: '#19CAB6',
                         // navigationBarHidden: flag,
@@ -81,7 +84,7 @@ export default class person extends Component {
                 })
                 .catch((error) => {
                     this.props.nav.navigator.push({
-                        title: 'Login',
+                        title: '登录',
                         titleTextColor: 'white',
                         barTintColor: '#19CAB6',
                         navigationBarHidden: flag,
@@ -96,7 +99,7 @@ export default class person extends Component {
                 });
         } else {
             this.props.nav.navigator.push({
-                title: 'Login',
+                title: '登录',
                 titleTextColor: 'white',
                 barTintColor: '#19CAB6',
                 navigationBarHidden: flag,
@@ -112,6 +115,28 @@ export default class person extends Component {
 
     onRightButtonPress() {
         Global.history =[];
+    }
+
+    onRightButtonPressSaved() {
+        Global.saved = [];
+        fetch(url + '/' + Global.username, {
+            method: 'put',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + Global.token,
+            },
+            body: JSON.stringify({
+                saved: Global.saved
+            })
+        })
+            .then((response) => response.json())
+            .then((responseJson) => {
+                console.log(responseJson);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }
 
     _onPress(_child, flag, _rowname) {
@@ -134,9 +159,12 @@ export default class person extends Component {
                             barTintColor: '#19CAB6',
                             navigationBarHidden: flag,
                             component: _child,
+                            rightButtonTitle: '清空',
                             //rightButtonTitle: 'Go Inside',
                             tintColor: 'white',
                             passProps: {tab: "saved"},
+                            onRightButtonPress: this.onRightButtonPressSaved,
+
                             // rightButtonIcon: require('image!NavBarButtonPlus'),
                             // onRightButtonPress: this.onRightButtonPress,
                             //navigationBarHidden: true,
@@ -154,7 +182,7 @@ export default class person extends Component {
                 Alert.alert("请登录","你尚未登录,或者你的登录已过期",
                     [
                         {text: '取消', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                        {text: '确认', onPress: () => this.okPress()},
+                        {text: '登录', onPress: () => this.okPress()},
                     ]);
             }
         } else {
@@ -209,14 +237,14 @@ export default class person extends Component {
                     <Text style={styles.text}>{_rowname}</Text>
                 </View>
                 <View style={styles.picv1}>
-                    <Icon_i name='ios-arrow-forward' size={25} color="grey"/>
+                    <Icon_e name='chevron-thin-right' size={15} color="grey"/>
                 </View>
             </TouchableOpacity>
         );
     }
     render() {
         return (
-            <View style={styles.container}>
+            <ScrollView style={styles.container}>
                 <View style={{backgroundColor: '#19CAB6', height: 20}}/>
                 <View style={styles.login}>
                     <TouchableOpacity
@@ -227,7 +255,7 @@ export default class person extends Component {
 
                         <Image
                             style={styles.img}
-                            source={require('../img/blank.gif')}
+                            source={require('../img/head.jpg')}
                         />
                         <Text style={styles.text1}>{this.name()}</Text>
                     </TouchableOpacity>
@@ -236,7 +264,7 @@ export default class person extends Component {
                 {this.renderRow('ios-time-outline', '历史记录', History)}
 
                 {StatusBar.setBarStyle("light-content")}
-            </View>
+            </ScrollView>
 
         );
     }
@@ -259,12 +287,15 @@ const styles = StyleSheet.create({
     },
     login: {
         //flex: 2.5,
-        height: height/5,
+        height: height/4,
         backgroundColor: '#19CAB6',
         // borderWidth: 1,
         // borderColor: 'red',
         justifyContent: 'center',
         alignItems: 'center',
+        // shadowOffset: { height: 2, width: 0 },
+        // shadowOpacity: 0.2,
+        // shadowRadius: 3,
     },
     button: {
         // borderWidth: 1,
@@ -273,13 +304,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     img: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
+        width: height/9,
+        height: height/9,
+        borderRadius: height/18,
         //alignSelf: 'center',
         //position: 'absolute',
-        // borderWidth: 1,
-        // borderColor: 'red',
+        backgroundColor: 'lightgrey',
+        // borderWidth: 0.5,
+        // borderColor: 'lightgrey',
     },
     row: {
         //marginTop: 64,
@@ -314,7 +346,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     text: {
-        fontSize: 17,
+        fontSize: 16,
     },
     text1: {
         fontSize: 14,
